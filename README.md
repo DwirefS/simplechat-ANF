@@ -1,4 +1,5 @@
 ![logo](./docs/images/logo-wide.png)
+![logo](./docs/images/logo-wide.png)
 
 # Overview
 
@@ -167,7 +168,7 @@ Azure NetApp Files brings enterprise-grade storage capabilities that enhance AI 
 
 | Capability | Benefit for AI/RAG |
 |------------|-------------------|
-| **Multi-Protocol Access** | Access the same data via NFS, SMB, and Object REST API simultaneously |
+| **Multi-Protocol Access** | Access the same data via NFS, SMB, and object REST API simultaneously |
 | **Sub-Millisecond Latency** | Ultra-fast document retrieval for real-time AI responses |
 | **Enterprise Performance** | Up to 4,500 MiB/s throughput per volume for large-scale processing |
 | **Unified Data Platform** | No data duplication—train models, run inference, and serve users from one source |
@@ -205,7 +206,7 @@ Azure NetApp Files enables AI applications to directly consume data from enterpr
 
 **Key Benefits:**
 
-- **Zero Data Movement** — Documents uploaded to NFS/SMB shares are immediately accessible to AI applications via Object REST API. No pipelines, no ETL, no waiting.
+- **Zero Data Movement** — Documents uploaded to NFS/SMB shares are immediately accessible to AI applications via object REST API. No pipelines, no ETL, no waiting.
 
 - **Single Source of Truth** — One copy of data serves all access patterns: file sharing, data science workflows, and AI/RAG applications.
 
@@ -278,12 +279,12 @@ Deploys standard SimpleChat with Azure Blob Storage only.
 
 ### Object REST API Setup (Manual Steps Required)
 
-> **IMPORTANT**: The Object REST API feature is currently in **PREVIEW** and requires manual configuration through the Azure Portal.
+> **IMPORTANT**: The object REST API feature is currently in **PREVIEW** and requires manual configuration through the Azure Portal.
 
-To enable Object REST API access to ANF volumes:
+To enable object REST API access to ANF volumes:
 
 #### Step 1: Enroll in Preview
-- Submit a [waitlist request](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-access-configure) for the Object REST API feature
+- Submit a [waitlist request](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-access-configure) for the object REST API feature
 - Activation takes approximately one week
 - You will receive an email confirmation
 
@@ -331,10 +332,10 @@ Once Object REST API is configured, ANF volumes can be accessed by:
 
 | Category | Files Added/Modified |
 |----------|---------------------|
-| **Infrastructure** | `azureNetAppFiles.bicep` - ANF account, pool, volumes deployment |
-| **VNet Integration** | Updated `virtualNetwork.bicep` with ANF subnet delegation |
-| **Application** | `anf_storage_service.py` - ANF Object REST API client |
-| **Semantic Kernel** | `anf_storage_plugin.py` - AI agent plugin for ANF |
+| **Infrastructure** | `azureNetAppFiles.bicep` - Azure NetApp Files account, pool, volumes deployment |
+| **VNet Integration** | Updated `virtualNetwork.bicep` with Azure NetApp Files subnet delegation |
+| **Application** | `anf_storage_service.py` - Azure NetApp Files object REST API client |
+| **Semantic Kernel** | `anf_storage_plugin.py` - AI agent plugin for Azure NetApp Files |
 | **Configuration** | Updated `config.py` with storage backend toggle |
 | **Documentation** | `CLAUDE.md`, `PROJECT_PLAN.md`, `DRIFT.md` |
 
@@ -346,7 +347,7 @@ Switch between Azure Blob Storage and Azure NetApp Files with environment variab
 # Default: Azure Blob Storage
 STORAGE_BACKEND="blob"
 
-# Use Azure NetApp Files Object REST API
+# Use Azure NetApp Files object REST API
 STORAGE_BACKEND="anf"
 ANF_OBJECT_API_ENDPOINT="https://<your-endpoint>"
 ANF_ACCESS_KEY="<from-azure-portal>"
@@ -363,7 +364,7 @@ ANF_SECRET_KEY="<from-azure-portal>"
 ### Official Documentation
 
 - [Azure NetApp Files Documentation](https://learn.microsoft.com/en-us/azure/azure-netapp-files/)
-- [Configure Object REST API](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-access-configure)
+- [Configure object REST API](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-access-configure)
 - [Access with S3-Compatible Clients](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-browser)
 - [Object REST API Overview](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-introduction)
 - [Connect OneLake to ANF](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-onelake)

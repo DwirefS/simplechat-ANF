@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-This project adds **Azure NetApp Files (ANF)** as the enterprise storage layer to the existing **Microsoft SimpleChat** AI chatbot demo. The goal is to demonstrate ANF's value proposition for AI workloads while preserving all existing SimpleChat functionality.
+This project adds **Azure NetApp Files** as the enterprise storage layer to the existing **Microsoft SimpleChat** AI chatbot demo. The goal is to demonstrate ANF's value proposition for AI workloads while preserving all existing SimpleChat functionality.
 
 **Key Principle: ADD, DON'T DELETE** - All existing SimpleChat code, infrastructure, and functionality remains intact.
 
@@ -10,11 +10,11 @@ This project adds **Azure NetApp Files (ANF)** as the enterprise storage layer t
 
 ## Project Architecture
 
-### Full SimpleChat + ANF Architecture
+### Full SimpleChat + Azure NetApp Files Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                           SimpleChat-ANF                                     │
+│                           SimpleChat-Azure NetApp Files                                     │
 │                    (AI Chatbot with Azure NetApp Files)                      │
 └─────────────────────────────────────────────────────────────────────────────┘
                                     │
@@ -94,7 +94,7 @@ This project adds **Azure NetApp Files (ANF)** as the enterprise storage layer t
 | Azure Speech Service | `speechService.bicep` | Audio transcription | KEEP |
 | Azure Video Indexer | `videoIndexer.bicep` | Video processing | KEEP |
 | Private Networking | `privateNetworking.bicep` | VNet integration | KEEP |
-| Virtual Network | `virtualNetwork.bicep` | Network infrastructure | KEEP (+ ANF subnet) |
+| Virtual Network | `virtualNetwork.bicep` | Network infrastructure | KEEP (+ Azure NetApp Files subnet) |
 
 ---
 
@@ -104,12 +104,12 @@ This project adds **Azure NetApp Files (ANF)** as the enterprise storage layer t
 
 ```
 deployers/bicep/
-├── main.bicep                          # Main orchestrator (UPDATED for ANF)
-├── main.parameters.json                # Parameters (UPDATED for ANF)
+├── main.bicep                          # Main orchestrator (UPDATED for Azure NetApp Files)
+├── main.parameters.json                # Parameters (UPDATED for Azure NetApp Files)
 └── modules/
     ├── appService.bicep                # KEEP
     ├── applicationInsights.bicep       # KEEP
-    ├── azureNetAppFiles.bicep          # NEW - ANF module
+    ├── azureNetAppFiles.bicep          # NEW - Azure NetApp Files module
     ├── containerRegistry.bicep         # KEEP
     ├── contentSafety.bicep             # KEEP
     ├── cosmosDb.bicep                  # KEEP
@@ -125,18 +125,18 @@ deployers/bicep/
     ├── speechService.bicep             # KEEP
     ├── storageAccount.bicep            # KEEP (existing blob storage)
     ├── videoIndexer.bicep              # KEEP
-    └── virtualNetwork.bicep            # UPDATED (added ANF subnet)
+    └── virtualNetwork.bicep            # UPDATED (added Azure NetApp Files subnet)
 ```
 
 ### Terraform Deployment (`deployers/terraform/`)
 
 ```
 deployers/terraform/
-├── main.tf                             # KEEP + ADD ANF module
-├── variables.tf                        # KEEP + ADD ANF variables
-├── outputs.tf                          # KEEP + ADD ANF outputs
+├── main.tf                             # KEEP + ADD Azure NetApp Files module
+├── variables.tf                        # KEEP + ADD Azure NetApp Files variables
+├── outputs.tf                          # KEEP + ADD Azure Netapp Files outputs
 └── modules/
-    └── azure_netapp_files/             # NEW - ANF module (to create)
+    └── azure_netapp_files/             # NEW - Azure NetApp Files module (to create)
         ├── main.tf
         ├── variables.tf
         └── outputs.tf
@@ -151,21 +151,21 @@ deployers/terraform/
 ```
 application/single_app/
 ├── app.py                              # KEEP - Flask entry point
-├── config.py                           # KEEP + ADD ANF configuration
-├── functions_documents.py              # KEEP + ADD ANF upload function
+├── config.py                           # KEEP + ADD Azure NetApp Files configuration
+├── functions_documents.py              # KEEP + ADD Azure NetApp Files upload function
 ├── functions_*.py                      # KEEP - All function files
 ├── route_backend_*.py                  # KEEP - All route files
 ├── services/                           # NEW - Add services folder
-│   └── anf_storage_service.py          # NEW - ANF storage service
+│   └── anf_storage_service.py          # NEW - Azure NetApp Files storage service
 ├── semantic_kernel_plugins/
 │   ├── blob_storage_plugin.py          # KEEP - Existing blob plugin
-│   ├── anf_storage_plugin.py           # NEW - ANF plugin
+│   ├── anf_storage_plugin.py           # NEW - Azure NetApp Files plugin
 │   └── [other plugins...]              # KEEP - All other plugins
 ├── templates/                          # KEEP - All templates
 ├── static/                             # KEEP - All static files
 ├── requirements.txt                    # KEEP + ADD boto3
 ├── Dockerfile                          # KEEP
-└── example.env                         # KEEP + ADD ANF variables
+└── example.env                         # KEEP + ADD Azure NetApp Files variables
 ```
 
 ### External Applications (`application/external_apps/`)
@@ -188,18 +188,18 @@ application/external_apps/
 
 | Task | Status | Files |
 |------|--------|-------|
-| Create ANF Bicep module | ✅ Done | `modules/azureNetAppFiles.bicep` |
-| Update VNet for ANF subnet | ✅ Done | `modules/virtualNetwork.bicep` |
-| Update main.bicep for ANF | ✅ Done | `main.bicep` |
-| Add ANF deployment parameters | ✅ Done | `main.bicep` |
-| Add ANF outputs | ✅ Done | `main.bicep` |
+| Create Azure NetApp Files Bicep module | ✅ Done | `modules/azureNetAppFiles.bicep` |
+| Update VNet for Azure NetApp Files subnet | ✅ Done | `modules/virtualNetwork.bicep` |
+| Update main.bicep for Azure NetApp Files | ✅ Done | `main.bicep` |
+| Add Azure NetApp Files deployment parameters | ✅ Done | `main.bicep` |
+| Add Azure NetApp Files outputs | ✅ Done | `main.bicep` |
 
 ### Phase 2: Application Code (Next)
 
 | Task | Status | Files |
 |------|--------|-------|
-| Create ANF storage service | 🔲 Pending | `services/anf_storage_service.py` |
-| Create ANF storage plugin | 🔲 Pending | `semantic_kernel_plugins/anf_storage_plugin.py` |
+| Create Azure NetApp Files storage service | 🔲 Pending | `services/anf_storage_service.py` |
+| Create Azure NetApp Files storage plugin | 🔲 Pending | `semantic_kernel_plugins/anf_storage_plugin.py` |
 | Add storage abstraction/toggle | 🔲 Pending | `config.py`, `functions_documents.py` |
 | Add boto3 dependency | 🔲 Pending | `requirements.txt` |
 | Update example.env | 🔲 Pending | `example.env` |
@@ -208,23 +208,23 @@ application/external_apps/
 
 | Task | Status | Files |
 |------|--------|-------|
-| Add ANF settings to admin UI | 🔲 Pending | `route_backend_control_center.py` |
-| Add ANF connection test | 🔲 Pending | `functions_admin.py` |
+| Add Azure NetApp Files settings to admin UI | 🔲 Pending | `route_backend_control_center.py` |
+| Add Azure NetApp Files connection test | 🔲 Pending | `functions_admin.py` |
 | Update settings templates | 🔲 Pending | `templates/admin/` |
 
 ### Phase 4: Azure AI Search Integration (Future)
 
 | Task | Status | Files |
 |------|--------|-------|
-| Configure ANF data source | 🔲 Pending | Search configuration |
-| Update indexer for ANF | 🔲 Pending | `functions_search.py` |
-| Test vector search with ANF | 🔲 Pending | Testing |
+| Configure Azure NetApp Files data source | 🔲 Pending | Search configuration |
+| Update indexer for Azure NetApp Files | 🔲 Pending | `functions_search.py` |
+| Test vector search with Azure NetApp Files | 🔲 Pending | Testing |
 
 ### Phase 5: Terraform & Testing (Future)
 
 | Task | Status | Files |
 |------|--------|-------|
-| Create ANF Terraform module | 🔲 Pending | `terraform/modules/azure_netapp_files/` |
+| Create Azure NetApp Files Terraform module | 🔲 Pending | `terraform/modules/azure_netapp_files/` |
 | Update main.tf | 🔲 Pending | `terraform/main.tf` |
 | End-to-end testing | 🔲 Pending | Testing |
 | Documentation updates | 🔲 Pending | `README.md`, docs/ |
@@ -233,14 +233,14 @@ application/external_apps/
 
 ## Storage Configuration Toggle
 
-The application will support both Blob Storage and ANF via configuration:
+The application will support both Blob Storage and Azure NetApp Files via configuration:
 
 ```python
 # config.py
 STORAGE_BACKEND = os.getenv('STORAGE_BACKEND', 'blob')  # 'blob' or 'anf'
 
 # When STORAGE_BACKEND='blob' - use existing Azure Blob Storage
-# When STORAGE_BACKEND='anf' - use Azure NetApp Files Object REST API
+# When STORAGE_BACKEND='anf' - use Azure NetApp Files object REST API
 ```
 
 This ensures:
@@ -283,7 +283,7 @@ ANF_PUBLIC_DOCUMENTS_BUCKET=public-documents
    - 4,500 MB/s throughput (Ultra tier)
 
 3. **Azure AI Native Integration**
-   - Azure AI Search indexes directly from ANF
+   - Azure AI Search indexes directly from Azure NetApp Files
    - Azure AI Foundry native connector
    - Seamless enterprise data integration
 
@@ -299,20 +299,20 @@ ANF_PUBLIC_DOCUMENTS_BUCKET=public-documents
 | Criteria | Measurement |
 |----------|-------------|
 | All SimpleChat features work | 100% existing functionality preserved |
-| ANF storage integration | Documents upload/download via S3 API |
+| Azure NetApp Files storage integration | Documents upload/download via S3 API |
 | Multi-protocol demo | Same data accessible via NFS, SMB, S3 |
-| One-click deployment | Bicep deploys all resources including ANF |
+| One-click deployment | Bicep deploys all resources including Azure NetApp Files |
 | Customer demo ready | Clear value proposition presentation |
 
 ---
 
 ## Next Steps
 
-1. **Create ANF storage service** (`services/anf_storage_service.py`)
-2. **Create ANF storage plugin** (`semantic_kernel_plugins/anf_storage_plugin.py`)
+1. **Create Azure NetApp Files storage service** (`services/anf_storage_service.py`)
+2. **Create Azure NetApp Files storage plugin** (`semantic_kernel_plugins/anf_storage_plugin.py`)
 3. **Add storage toggle** in `config.py` and `functions_documents.py`
-4. **Test document upload** with ANF Object REST API
-5. **Update documentation** for deployment with ANF
+4. **Test document upload** with Azure NetApp Files object REST API
+5. **Update documentation** for deployment with Azure NetApp Files
 
 ---
 
@@ -320,5 +320,5 @@ ANF_PUBLIC_DOCUMENTS_BUCKET=public-documents
 
 - [SimpleChat Original](https://github.com/microsoft/simplechat)
 - [Azure NetApp Files](https://learn.microsoft.com/en-us/azure/azure-netapp-files/)
-- [ANF Object REST API](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-introduction)
-- [ANF Bicep Reference](https://learn.microsoft.com/en-us/azure/templates/microsoft.netapp/netappaccounts)
+- [Azure NetApp Files object REST API](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-introduction)
+- [Azure NetApp Files Bicep Reference](https://learn.microsoft.com/en-us/azure/templates/microsoft.netapp/netappaccounts)
