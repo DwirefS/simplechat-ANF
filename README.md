@@ -290,7 +290,25 @@ Once Object REST API is configured, ANF volumes can be accessed by:
 |----------|---------------------|
 | **Infrastructure** | `azureNetAppFiles.bicep` - ANF account, pool, volumes deployment |
 | **VNet Integration** | Updated `virtualNetwork.bicep` with ANF subnet delegation |
+| **Application** | `anf_storage_service.py` - ANF Object REST API client |
+| **Semantic Kernel** | `anf_storage_plugin.py` - AI agent plugin for ANF |
+| **Configuration** | Updated `config.py` with storage backend toggle |
 | **Documentation** | `CLAUDE.md`, `PROJECT_PLAN.md`, `DRIFT.md` |
+
+### Storage Backend Configuration
+
+Switch between Azure Blob Storage and Azure NetApp Files with environment variables:
+
+```bash
+# Default: Azure Blob Storage
+STORAGE_BACKEND="blob"
+
+# Use Azure NetApp Files Object REST API
+STORAGE_BACKEND="anf"
+ANF_OBJECT_API_ENDPOINT="https://<your-endpoint>"
+ANF_ACCESS_KEY="<from-azure-portal>"
+ANF_SECRET_KEY="<from-azure-portal>"
+```
 
 ### Compatibility
 
