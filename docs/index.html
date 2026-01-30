@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SimpleChat-ANF | Azure AI Accelerator</title>
+    <style>
+        :root {
+            --azure-blue: #0078d4;
+            --azure-dark: #004578;
+            --netapp-green: #00a562;
+            --text-primary: #1a1a1a;
+            --text-secondary: #555;
+            --bg-light: #f8f9fa;
+            --border-color: #e0e0e0;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: #fff;
+        }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+        /* Header */
+        .hero {
+            background: linear-gradient(135deg, var(--azure-blue) 0%, var(--azure-dark) 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .hero h1 { font-size: 2.5rem; margin-bottom: 10px; font-weight: 600; }
+        .hero .tagline { font-size: 1.3rem; opacity: 0.95; margin-bottom: 30px; }
+        .hero .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+        }
+
+        /* Cards */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+        .card {
+            background: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 24px;
+        }
+        .card h3 {
+            color: var(--azure-blue);
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        .card p { color: var(--text-secondary); font-size: 0.95rem; }
+
+        /* Sections */
+        section { padding: 50px 0; }
+        section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            color: var(--text-primary);
+            text-align: center;
+        }
+
+        /* Diagram */
+        .diagram {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 25px;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.4;
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        th {
+            background: var(--bg-light);
+            font-weight: 600;
+            color: var(--azure-blue);
+        }
+
+        /* Buttons */
+        .buttons { text-align: center; margin: 30px 0; }
+        .btn {
+            display: inline-block;
+            padding: 14px 28px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 5px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .btn-primary { background: var(--azure-blue); color: white; }
+        .btn-secondary { background: var(--netapp-green); color: white; }
+
+        /* Benefits */
+        .benefits { background: var(--bg-light); }
+        .benefit-item {
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .benefit-item:last-child { border-bottom: none; }
+        .benefit-item strong { color: var(--azure-blue); }
+
+        /* Footer */
+        footer {
+            background: var(--text-primary);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        footer a { color: #8bb9e0; }
+        footer p { margin: 10px 0; opacity: 0.9; }
+
+        /* Value prop banner */
+        .value-banner {
+            background: linear-gradient(90deg, var(--azure-blue), var(--netapp-green));
+            color: white;
+            padding: 30px;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <div class="container">
+        <h1>SimpleChat-ANF</h1>
+        <p class="tagline">Azure AI Accelerator powered by Azure NetApp Files</p>
+        <span class="badge">Azure + NetApp = Better Together</span>
+    </div>
+</div>
+
+<div class="value-banner">
+    Enterprise NAS data → AI applications. No pipelines. No data movement. Instant access.
+</div>
+
+<section>
+    <div class="container">
+        <h2>Multi-Protocol Architecture</h2>
+        <p style="text-align: center; margin-bottom: 30px; color: var(--text-secondary);">
+            One copy of data. Three access methods. Unified platform.
+        </p>
+        <div class="diagram">┌─────────────────────────────────────────────────────────────────────┐
+│                     Enterprise Data Workflow                         │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│   ┌──────────────┐                                                   │
+│   │ Windows Users│──── SMB ────┐                                     │
+│   │ (file drops) │             │                                     │
+│   └──────────────┘             │                                     │
+│                                ▼                                     │
+│   ┌──────────────┐      ┌─────────────┐      ┌──────────────┐       │
+│   │ Linux/Data   │─NFS─▶│  ANF Volume │◀─S3──│  AI Apps     │       │
+│   │ Science      │      │  (one copy) │      │  (SimpleChat)│       │
+│   └──────────────┘      └─────────────┘      └──────────────┘       │
+│                                ▲                                     │
+│   ┌──────────────┐             │                                     │
+│   │ Backup/DR    │── Snapshot ─┘                                     │
+│   │ Operations   │                                                   │
+│   └──────────────┘                                                   │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘</div>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        <h2>Key Capabilities</h2>
+        <div class="cards">
+            <div class="card">
+                <h3>Multi-Protocol Access</h3>
+                <p>Access the same data via NFS, SMB, and Object REST API (S3-compatible) simultaneously.</p>
+            </div>
+            <div class="card">
+                <h3>Zero Data Movement</h3>
+                <p>Enterprise NAS data directly accessible to AI applications. No ETL pipelines needed.</p>
+            </div>
+            <div class="card">
+                <h3>Powered by ONTAP</h3>
+                <p>Instant snapshots, cross-region replication, storage tiering, sub-millisecond latency.</p>
+            </div>
+            <div class="card">
+                <h3>Azure AI Integration</h3>
+                <p>Native integration with Azure AI Search, Databricks, OneLake, and AI Foundry.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="benefits">
+    <div class="container">
+        <h2>Enterprise Value Proposition</h2>
+        <div class="benefit-item">
+            <strong>Single Source of Truth</strong> — One copy of data serves file sharing, data science, and AI/RAG workloads.
+        </div>
+        <div class="benefit-item">
+            <strong>Accelerate Time-to-Value</strong> — Drop a file on the SMB share, query it in the AI chatbot seconds later.
+        </div>
+        <div class="benefit-item">
+            <strong>Simplify Architecture</strong> — Eliminate complexity of syncing between file storage and object storage.
+        </div>
+        <div class="benefit-item">
+            <strong>Enterprise Compliance</strong> — SAP HANA, GDPR, HIPAA, SOC certified.
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        <h2>Performance Tiers</h2>
+        <table>
+            <tr>
+                <th>Tier</th>
+                <th>Throughput</th>
+                <th>Use Case</th>
+            </tr>
+            <tr>
+                <td><strong>Standard</strong></td>
+                <td>16 MiB/s per TiB</td>
+                <td>Cost-optimized, archival</td>
+            </tr>
+            <tr>
+                <td><strong>Premium</strong></td>
+                <td>64 MiB/s per TiB</td>
+                <td>General-purpose, RAG workloads</td>
+            </tr>
+            <tr>
+                <td><strong>Ultra</strong></td>
+                <td>128 MiB/s per TiB</td>
+                <td>High-performance, real-time AI</td>
+            </tr>
+            <tr>
+                <td><strong>Flexible</strong></td>
+                <td>1-4,500 MiB/s</td>
+                <td>Custom throughput & capacity</td>
+            </tr>
+        </table>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        <h2>Get Started</h2>
+        <div class="buttons">
+            <a href="https://github.com/DwirefS/simplechat-ANF" class="btn btn-primary">View on GitHub</a>
+            <a href="https://github.com/DwirefS/simplechat-ANF/blob/main/DEPLOY_STEPS.md" class="btn btn-secondary">Deployment Guide</a>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="container">
+        <p><strong>SimpleChat-ANF</strong> — Azure AI Accelerator</p>
+        <p>Based on <a href="https://github.com/microsoft/simplechat">Microsoft SimpleChat</a> | Extended with <a href="https://learn.microsoft.com/en-us/azure/azure-netapp-files/">Azure NetApp Files</a></p>
+        <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.7;">
+            Open source under MIT License. This project is provided as-is for demonstration purposes.
+        </p>
+    </div>
+</footer>
+
+</body>
+</html>
