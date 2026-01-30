@@ -42,6 +42,7 @@ param configureApplicationPermissions bool
   'Standard'
   'Premium'
   'Ultra'
+  'Flexible'
 ])
 param serviceLevel string = 'Premium'
 

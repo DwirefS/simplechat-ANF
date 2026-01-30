@@ -221,6 +221,7 @@ Choose the performance tier that fits your workload:
 | **Standard** | 16 MiB/s per TiB | Cost-optimized, archival |
 | **Premium** | 64 MiB/s per TiB | General-purpose, recommended for RAG |
 | **Ultra** | 128 MiB/s per TiB | High-performance, real-time AI |
+| **Flexible** | Custom (1-4,500 MiB/s) | Independent throughput & capacity tuning |
 
 ### Deployment Options
 
