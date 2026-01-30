@@ -1,7 +1,5 @@
 ---
-layout: page
 title: "Azure NetApp Files Integration"
-description: "Deep dive into Azure NetApp Files integration with SimpleChat for enterprise AI workloads"
 ---
 
 ## Azure NetApp Files Overview

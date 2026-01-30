@@ -1,7 +1,5 @@
 ---
-layout: page
 title: "SimpleChat-ANF | Azure AI Accelerator"
-description: "Enterprise-grade AI chatbot accelerator powered by Azure NetApp Files and Azure OpenAI"
 ---
 
 <div style="text-align: center; margin-bottom: 2rem;">
