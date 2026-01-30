@@ -147,6 +147,7 @@
 
 <div class="hero">
     <div class="container">
+        <img src="https://learn.microsoft.com/en-us/azure/azure-netapp-files/media/azure-netapp-files/azure-netapp-files-logo.png" alt="Azure NetApp Files" style="max-width: 280px; margin-bottom: 20px; filter: brightness(0) invert(1);">
         <h1>SimpleChat-ANF</h1>
         <p class="tagline">Azure AI Accelerator powered by Azure NetApp Files</p>
         <span class="badge">Azure + NetApp = Better Together</span>
@@ -261,13 +262,86 @@
     </div>
 </section>
 
+<section style="background: #fff;">
+    <div class="container">
+        <h2>Azure AI Services Integration</h2>
+        <p style="text-align: center; margin-bottom: 30px; color: var(--text-secondary);">
+            Azure NetApp Files integrates natively with Azure's AI ecosystem
+        </p>
+        <table>
+            <tr>
+                <th>Service</th>
+                <th>Integration</th>
+            </tr>
+            <tr>
+                <td><strong>Azure AI Search</strong></td>
+                <td>S3-compatible data source indexer for RAG pipelines</td>
+            </tr>
+            <tr>
+                <td><strong>Azure OpenAI</strong></td>
+                <td>LLM responses grounded in enterprise documents</td>
+            </tr>
+            <tr>
+                <td><strong>Azure Databricks</strong></td>
+                <td>Spark S3A connector for large-scale analytics</td>
+            </tr>
+            <tr>
+                <td><strong>Microsoft Fabric OneLake</strong></td>
+                <td>Shortcuts to virtualize ANF data in lakehouses</td>
+            </tr>
+            <tr>
+                <td><strong>Azure AI Foundry</strong></td>
+                <td>Direct access to training and inference data</td>
+            </tr>
+            <tr>
+                <td><strong>Azure Document Intelligence</strong></td>
+                <td>PDF and image extraction from ANF volumes</td>
+            </tr>
+        </table>
+    </div>
+</section>
+
+<section style="background: var(--bg-light);">
+    <div class="container">
+        <h2>What is SimpleChat?</h2>
+        <p style="text-align: center; max-width: 800px; margin: 0 auto 30px; color: var(--text-secondary);">
+            SimpleChat is a <strong>Microsoft-created demo application</strong> that showcases enterprise AI capabilities using Azure services.
+            This fork extends SimpleChat with Azure NetApp Files as the storage layer.
+        </p>
+        <div class="cards">
+            <div class="card">
+                <h3>RAG-Powered Chat</h3>
+                <p>Upload documents and chat with AI that grounds responses in your data using retrieval-augmented generation.</p>
+            </div>
+            <div class="card">
+                <h3>Document Management</h3>
+                <p>Personal and group workspaces for organizing documents with full version control.</p>
+            </div>
+            <div class="card">
+                <h3>Enterprise Security</h3>
+                <p>Azure Entra ID authentication, RBAC, content safety, and compliance features.</p>
+            </div>
+            <div class="card">
+                <h3>Multi-Format Support</h3>
+                <p>PDF, Word, Excel, PowerPoint, images, audio, and video file processing.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
 <section>
     <div class="container">
         <h2>Get Started</h2>
+        <p style="text-align: center; margin-bottom: 30px; color: var(--text-secondary);">
+            Deploy SimpleChat-ANF in your Azure subscription
+        </p>
         <div class="buttons">
             <a href="https://github.com/DwirefS/simplechat-ANF" class="btn btn-primary">View on GitHub</a>
             <a href="https://github.com/DwirefS/simplechat-ANF/blob/main/DEPLOY_STEPS.md" class="btn btn-secondary">Deployment Guide</a>
         </div>
+        <p style="text-align: center; margin-top: 30px; font-size: 0.9rem; color: var(--text-secondary);">
+            100% backwards compatible with original SimpleChat • Zero deletions from parent repo • MIT License
+        </p>
     </div>
 </section>
 
