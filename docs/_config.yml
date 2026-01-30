@@ -11,12 +11,11 @@ lang: en
 # Theme configuration (using local theme files)
 # remote_theme: olivier3lanc/Jekyll-LibDoc  # Disabled - using custom theme
 
-# Plugins
+# Plugins (GitHub Pages supported only)
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
   - jekyll-sitemap
-  - jekyll-relative-links
 
 # Permalinks (pretty URLs)
 permalink: pretty
