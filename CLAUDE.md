@@ -1,4 +1,4 @@
-# CLOUD.md - Claude Working File for SimpleChat-ANF
+# CLAUDE.md - Claude Working File for SimpleChat-ANF
 
 ## Project Identity
 
@@ -103,7 +103,7 @@ simplechat-ANF/
 │   ├── terraform/                     # Terraform IaC (keep all, add ANF)
 │   └── azurecli/                      # CLI deployment scripts
 ├── docs/                              # Documentation
-├── CLOUD.md                           # This file
+├── CLAUDE.md                          # This file
 ├── PROJECT_PLAN.md                    # Implementation plan
 └── README.md                          # Project readme
 ```
