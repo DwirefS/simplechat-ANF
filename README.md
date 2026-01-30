@@ -368,6 +368,6 @@ ANF_SECRET_KEY="<from-azure-portal>"
 - [Configure object REST API](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-access-configure)
 - [Access with S3-Compatible Clients](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-browser)
 - [Object REST API Overview](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-introduction)
-- [Connect OneLake to ANF](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-onelake)
-- [Connect Azure Databricks to ANF](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-databricks)
+- [Connect OneLake to Azure NetApp Files](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-onelake)
+- [Connect Azure Databricks to Azure NetApp Files](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-databricks)
 - [Project Drift Report](./DRIFT.md) - Detailed comparison with parent repo
