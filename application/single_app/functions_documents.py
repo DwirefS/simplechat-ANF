@@ -3352,24 +3352,13 @@ Format your response as JSON with these keys:
         return None
 
 def upload_to_blob(temp_file_path, user_id, document_id, blob_filename, update_callback, group_id=None, public_workspace_id=None):
-    """Uploads the file to the configured storage backend.
+    """Uploads the file to Azure Blob Storage.
 
-    Automatically routes to Azure NetApp Files when STORAGE_BACKEND='anf',
-    otherwise uses Azure Blob Storage (default).
+    Note: Azure NetApp Files can be deployed alongside this application for
+    NFS/SMB access to documents. The Object REST API feature is in preview
+    and requires manual Azure Portal configuration. See:
+    https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-access-configure
     """
-    # Check if ANF storage is enabled - delegate to ANF upload if so
-    if is_anf_storage_enabled():
-        return _upload_to_anf_internal(
-            temp_file_path=temp_file_path,
-            user_id=user_id,
-            document_id=document_id,
-            blob_filename=blob_filename,
-            update_callback=update_callback,
-            group_id=group_id,
-            public_workspace_id=public_workspace_id
-        )
-
-    # Default: Use Azure Blob Storage
     is_group = group_id is not None
     is_public_workspace = public_workspace_id is not None
 
@@ -3418,67 +3407,10 @@ def upload_to_blob(temp_file_path, user_id, document_id, blob_filename, update_c
         raise Exception(f"Error uploading {blob_filename} to Blob Storage: {str(e)}")
 
 
-def _upload_to_anf_internal(temp_file_path, user_id, document_id, blob_filename, update_callback, group_id=None, public_workspace_id=None):
-    """Uploads the file to Azure NetApp Files Object Storage (S3-compatible API).
-
-    Internal function called by upload_to_blob when STORAGE_BACKEND='anf'.
-
-    Azure NetApp Files provides multi-protocol access to the same data:
-    - S3 API (used here) for application access
-    - NFS for Linux/Unix clients
-    - SMB for Windows clients
-    """
-    is_group = group_id is not None
-    is_public_workspace = public_workspace_id is not None
-
-    # Determine bucket based on workspace type
-    if is_public_workspace:
-        bucket = ANF_PUBLIC_DOCUMENTS_BUCKET
-        object_key = f"{public_workspace_id}/{blob_filename}"
-    elif is_group:
-        bucket = ANF_GROUP_DOCUMENTS_BUCKET
-        object_key = f"{group_id}/{blob_filename}"
-    else:
-        bucket = ANF_USER_DOCUMENTS_BUCKET
-        object_key = f"{user_id}/{blob_filename}"
-
-    try:
-        # Get ANF client
-        anf_client = get_anf_client()
-        if not anf_client:
-            raise Exception("ANF storage client not available or not configured. Check ANF_OBJECT_API_ENDPOINT and credentials.")
-
-        # Prepare metadata (S3 metadata values must be strings)
-        metadata = {
-            "document_id": str(document_id),
-            "group_id": str(group_id) if is_group else "",
-            "user_id": str(user_id) if not is_group else "",
-            "original_filename": blob_filename
-        }
-
-        update_callback(status=f"Uploading {blob_filename} to Azure NetApp Files...")
-
-        # Upload using ANF S3 client
-        result = anf_client.upload_file(
-            local_path=temp_file_path,
-            bucket=bucket,
-            key=object_key,
-            metadata=metadata
-        )
-
-        print(f"Successfully uploaded {blob_filename} to ANF at {bucket}/{object_key}")
-        return object_key
-
-    except Exception as e:
-        print(f"Error uploading {blob_filename} to Azure NetApp Files: {str(e)}")
-        raise Exception(f"Error uploading {blob_filename} to Azure NetApp Files: {str(e)}")
-
-
 def upload_to_storage(temp_file_path, user_id, document_id, blob_filename, update_callback, group_id=None, public_workspace_id=None):
-    """Uploads file to the configured storage backend (Blob Storage or Azure NetApp Files).
+    """Uploads file to Azure Blob Storage.
 
-    This is an alias for upload_to_blob, which now automatically routes to ANF when enabled.
-    Provided for explicit usage when the caller wants to be clear about storage abstraction.
+    This is an alias for upload_to_blob for consistent naming.
 
     Args:
         temp_file_path: Path to the temporary file to upload

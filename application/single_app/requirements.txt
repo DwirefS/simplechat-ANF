@@ -29,7 +29,6 @@ azure-identity==1.23.0
 azure-ai-contentsafety==1.0.0
 azure-storage-blob==12.24.1
 azure-storage-queue==12.12.0
-boto3>=1.34.0  # For Azure NetApp Files Object REST API (S3-compatible)
 azure-keyvault-secrets==4.10.0
 pypdf==6.4.0
 python-docx==1.1.2
