@@ -214,6 +214,54 @@ storage_account_user_documents_container_name = "user-documents"
 storage_account_group_documents_container_name = "group-documents"
 storage_account_public_documents_container_name = "public-documents"
 
+# =============================================================================
+# Storage Backend Configuration
+# =============================================================================
+# Toggle between Azure Blob Storage and Azure NetApp Files Object REST API
+# Options: "blob" (default) or "anf"
+STORAGE_BACKEND = os.getenv("STORAGE_BACKEND", "blob").lower()
+
+# =============================================================================
+# Azure NetApp Files Configuration (used when STORAGE_BACKEND="anf")
+# =============================================================================
+# IMPORTANT: Object REST API requires manual setup via Azure Portal:
+# 1. Enroll in preview (waitlist)
+# 2. Generate SSL certificate
+# 3. Create bucket from Volume > Buckets
+# 4. Generate credentials
+# See: https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-access-configure
+
+ANF_OBJECT_API_ENDPOINT = os.getenv("ANF_OBJECT_API_ENDPOINT", "")
+ANF_ACCESS_KEY = os.getenv("ANF_ACCESS_KEY", "")
+ANF_SECRET_KEY = os.getenv("ANF_SECRET_KEY", "")
+ANF_VERIFY_SSL = os.getenv("ANF_VERIFY_SSL", "true").lower() == "true"
+ANF_SERVICE_LEVEL = os.getenv("ANF_SERVICE_LEVEL", "Premium")
+
+# ANF bucket names (created via Azure Portal, map to blob container names)
+ANF_USER_DOCUMENTS_BUCKET = os.getenv("ANF_USER_DOCUMENTS_BUCKET", "user-documents")
+ANF_GROUP_DOCUMENTS_BUCKET = os.getenv("ANF_GROUP_DOCUMENTS_BUCKET", "group-documents")
+ANF_PUBLIC_DOCUMENTS_BUCKET = os.getenv("ANF_PUBLIC_DOCUMENTS_BUCKET", "public-documents")
+
+def is_anf_storage_enabled():
+    """Check if Azure NetApp Files storage backend is enabled and configured."""
+    return STORAGE_BACKEND == "anf" and bool(ANF_OBJECT_API_ENDPOINT)
+
+def get_anf_client():
+    """Get ANF storage service client if enabled, None otherwise."""
+    if not is_anf_storage_enabled():
+        return None
+    try:
+        from services.anf_storage_service import ANFStorageService
+        return ANFStorageService(
+            endpoint=ANF_OBJECT_API_ENDPOINT,
+            access_key=ANF_ACCESS_KEY,
+            secret_key=ANF_SECRET_KEY,
+            verify_ssl=ANF_VERIFY_SSL
+        )
+    except Exception as e:
+        logging.error(f"Failed to initialize ANF storage client: {e}")
+        return None
+
 # Initialize Azure Cosmos DB client
 cosmos_endpoint = os.getenv("AZURE_COSMOS_ENDPOINT")
 cosmos_key = os.getenv("AZURE_COSMOS_KEY")

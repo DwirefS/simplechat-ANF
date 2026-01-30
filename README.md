@@ -14,7 +14,9 @@ The application utilizes **Azure Cosmos DB** for storing conversations, metadata
 
 ## Quick Deploy
 
-[Detailed deployment Guide](./deployers/bicep/README.md)
+**📘 [Complete Step-by-Step Deployment Guide](./DEPLOY_STEPS.md)** ← Start here for full deployment instructions
+
+[Bicep Module Reference](./deployers/bicep/README.md)
 
 ### Pre-Configuration:
 
@@ -152,3 +154,218 @@ azd up
   -   **Images**: `jpg`, `jpeg`, `png`, `bmp`, `tiff`, `tif`, `heif`
   -   **Video**: `mp4`, `mov`, `avi`, `wmv`, `mkv`, `flv`, `mxf`, `gxf`, `ts`, `ps`, `3gp`, `3gpp`, `mpg`, `asf`, `m4v`, `isma`, `ismv`, `dvr-ms`
   -   **Audio**: `wav`, `m4a`
+
+---
+
+## Azure NetApp Files Integration (SimpleChat-ANF)
+
+This fork extends SimpleChat with **Azure NetApp Files (ANF)** as an enterprise storage option, demonstrating ANF's powerful capabilities for AI and RAG workloads.
+
+### Why Azure NetApp Files for AI Workloads?
+
+Azure NetApp Files brings enterprise-grade storage capabilities that enhance AI applications:
+
+| Capability | Benefit for AI/RAG |
+|------------|-------------------|
+| **Multi-Protocol Access** | Access the same data via NFS, SMB, and Object REST API simultaneously |
+| **Sub-Millisecond Latency** | Ultra-fast document retrieval for real-time AI responses |
+| **Enterprise Performance** | Up to 4,500 MiB/s throughput per volume for large-scale processing |
+| **Unified Data Platform** | No data duplication—train models, run inference, and serve users from one source |
+| **Azure AI Integration** | Native integration with Azure AI Search, Databricks, OneLake |
+| **Enterprise Compliance** | SAP HANA, GDPR, HIPAA, SOC certified |
+
+### Enterprise Value Proposition
+
+**Direct Access to Existing Enterprise Data**
+
+Azure NetApp Files enables AI applications to directly consume data from enterprise NAS storage without requiring data movement or duplication:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                     Enterprise Data Workflow                         │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│   ┌──────────────┐                                                   │
+│   │ Windows Users│──── SMB ────┐                                     │
+│   │ (file drops) │             │                                     │
+│   └──────────────┘             │                                     │
+│                                ▼                                     │
+│   ┌──────────────┐      ┌─────────────┐      ┌──────────────┐       │
+│   │ Linux/Data   │─NFS─▶│  ANF Volume │◀─S3──│  AI Apps     │       │
+│   │ Science      │      │  (one copy) │      │  (SimpleChat)│       │
+│   └──────────────┘      └─────────────┘      └──────────────┘       │
+│                                ▲                                     │
+│   ┌──────────────┐             │                                     │
+│   │ Backup/DR    │── Snapshot ─┘                                     │
+│   │ Operations   │                                                   │
+│   └──────────────┘                                                   │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+**Key Benefits:**
+
+- **Zero Data Movement** — Documents uploaded to NFS/SMB shares are immediately accessible to AI applications via Object REST API. No pipelines, no ETL, no waiting.
+
+- **Single Source of Truth** — One copy of data serves all access patterns: file sharing, data science workflows, and AI/RAG applications.
+
+- **Powered by NetApp ONTAP** — Enterprise-proven storage OS delivering instant snapshots, cross-region replication, storage tiering, and consistent sub-millisecond latency.
+
+- **Simplify AI Data Architecture** — Eliminate the complexity of synchronizing data between file storage and object storage. Your enterprise file shares become AI-ready instantly.
+
+- **Accelerate Time-to-Value** — Existing documents on corporate file shares can power RAG applications immediately. Drop a file on the share, query it in the chatbot seconds later.
+
+### Multi-Protocol Architecture
+
+Azure NetApp Files provides **three protocols to the same underlying data**:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    Azure NetApp Files Volume                     │
+│                      (Single Data Source)                        │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐        │
+│   │  Object REST │   │     NFS      │   │     SMB      │        │
+│   │     API      │   │  (v3/v4.1)   │   │   (2.x/3.x)  │        │
+│   └──────┬───────┘   └──────┬───────┘   └──────┬───────┘        │
+│          │                  │                  │                 │
+│          ▼                  ▼                  ▼                 │
+│   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐        │
+│   │ Azure AI     │   │ Data Science │   │ Windows      │        │
+│   │ Services     │   │ Workloads    │   │ Clients      │        │
+│   └──────────────┘   └──────────────┘   └──────────────┘        │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Use Cases:**
+- **Object REST API**: Azure AI Search indexers, Azure Databricks, OneLake shortcuts
+- **NFS**: Linux compute, Jupyter notebooks, ML training pipelines
+- **SMB**: Windows desktops, enterprise file sharing, Active Directory integration
+
+### ANF Service Tiers
+
+Choose the performance tier that fits your workload:
+
+| Tier | Throughput | Use Case |
+|------|------------|----------|
+| **Standard** | 16 MiB/s per TiB | Cost-optimized, archival |
+| **Premium** | 64 MiB/s per TiB | General-purpose, recommended for RAG |
+| **Ultra** | 128 MiB/s per TiB | High-performance, real-time AI |
+| **Flexible** | Custom (1-4,500 MiB/s) | Independent throughput & capacity tuning |
+
+### Deployment
+
+#### Deploy with ANF Infrastructure
+
+```powershell
+azd up --parameters deployAzureNetAppFiles=true anfServiceLevel=Premium
+```
+
+This deploys:
+- All standard SimpleChat resources (Blob Storage for documents)
+- Azure NetApp Files account, capacity pool, and volumes
+- VNet with dedicated ANF subnet (Microsoft.NetApp/volumes delegation)
+
+#### Deploy without ANF (Original SimpleChat)
+
+```powershell
+azd up
+```
+
+Deploys standard SimpleChat with Azure Blob Storage only.
+
+### Object REST API Setup (Manual Steps Required)
+
+> **IMPORTANT**: The Object REST API feature is currently in **PREVIEW** and requires manual configuration through the Azure Portal.
+
+To enable Object REST API access to ANF volumes:
+
+#### Step 1: Enroll in Preview
+- Submit a [waitlist request](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-access-configure) for the Object REST API feature
+- Activation takes approximately one week
+- You will receive an email confirmation
+
+#### Step 2: Generate SSL Certificate
+- Navigate to your NetApp volume in Azure Portal
+- Create a PEM-formatted SSL certificate
+- The certificate Subject must be set to your endpoint: `CN=<IP or FQDN>`
+- **You are responsible for certificate lifecycle management**
+
+#### Step 3: Create a Bucket
+- In Azure Portal, navigate to your NetApp volume
+- Select **Buckets** from the volume menu
+- Click **+Create** to create a new bucket
+- Configure: bucket name, subdirectory path, UID/GID, permissions (Read or Read-Write)
+
+#### Step 4: Generate Credentials
+- After bucket creation, generate access credentials
+- This creates an access key and secret access key
+- **Store credentials securely—they cannot be retrieved again**
+
+#### Step 5: Install Certificate on Clients
+- Install the certificate on machines that will access the API
+- **Windows**: Add to Trusted Root Certification Authorities
+- **Linux**: Add to system trust store
+
+#### Step 6: Access with S3-Compatible Clients
+Microsoft officially documents these clients:
+- **AWS CLI**: `aws s3 ls --endpoint-url https://<endpoint> s3://<bucket>/`
+- **S3 Browser**: GUI tool for S3-compatible storage
+
+When using AWS CLI, always use `us-east-1` as the default region name.
+
+### Azure AI Services Integration
+
+Once Object REST API is configured, ANF volumes can be accessed by:
+
+| Service | Integration Method |
+|---------|-------------------|
+| **Azure AI Search** | S3-compatible data source indexer |
+| **Azure Databricks** | Spark S3A connector |
+| **OneLake** | Shortcuts to virtualize ANF into Microsoft Fabric |
+| **Azure AI Foundry** | Direct access to training data |
+
+### What's New in This Fork
+
+| Category | Files Added/Modified |
+|----------|---------------------|
+| **Infrastructure** | `azureNetAppFiles.bicep` - ANF account, pool, volumes deployment |
+| **VNet Integration** | Updated `virtualNetwork.bicep` with ANF subnet delegation |
+| **Application** | `anf_storage_service.py` - ANF Object REST API client |
+| **Semantic Kernel** | `anf_storage_plugin.py` - AI agent plugin for ANF |
+| **Configuration** | Updated `config.py` with storage backend toggle |
+| **Documentation** | `CLAUDE.md`, `PROJECT_PLAN.md`, `DRIFT.md` |
+
+### Storage Backend Configuration
+
+Switch between Azure Blob Storage and Azure NetApp Files with environment variables:
+
+```bash
+# Default: Azure Blob Storage
+STORAGE_BACKEND="blob"
+
+# Use Azure NetApp Files Object REST API
+STORAGE_BACKEND="anf"
+ANF_OBJECT_API_ENDPOINT="https://<your-endpoint>"
+ANF_ACCESS_KEY="<from-azure-portal>"
+ANF_SECRET_KEY="<from-azure-portal>"
+```
+
+### Compatibility
+
+- ✅ **100% backwards compatible** with original SimpleChat
+- ✅ **All existing features preserved** (see [DRIFT.md](./DRIFT.md) for full comparison)
+- ✅ **Zero deletions** from parent repository
+- ✅ **Azure Blob Storage** remains the default document storage
+
+### Official Documentation
+
+- [Azure NetApp Files Documentation](https://learn.microsoft.com/en-us/azure/azure-netapp-files/)
+- [Configure Object REST API](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-access-configure)
+- [Access with S3-Compatible Clients](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-browser)
+- [Object REST API Overview](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-introduction)
+- [Connect OneLake to ANF](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-onelake)
+- [Connect Azure Databricks to ANF](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-databricks)
+- [Project Drift Report](./DRIFT.md) - Detailed comparison with parent repo

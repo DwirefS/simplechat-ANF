@@ -42,6 +42,7 @@ param configureApplicationPermissions bool
   'Standard'
   'Premium'
   'Ultra'
+  'Flexible'
 ])
 param serviceLevel string = 'Premium'
 
@@ -63,8 +64,8 @@ param enableCoolAccess bool = false
 ])
 param protocolType string = 'NFSv4.1'
 
-@description('Enable Object REST API (S3-compatible)')
-param enableObjectApi bool = true
+// Note: Object REST API is enabled via Azure Portal after volume deployment.
+// See: https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-access-configure
 
 // Import diagnostic settings configurations
 module diagnosticConfigs 'diagnosticSettings.bicep' = if (enableDiagLogging) {
@@ -149,7 +150,7 @@ resource volume 'Microsoft.NetApp/netAppAccounts/capacityPools/volumes@2025-01-0
 }
 
 //=========================================================
-// Volume for User Documents Bucket
+// Volume for User Documents (create bucket via Azure Portal after deployment)
 //=========================================================
 resource volumeUserDocs 'Microsoft.NetApp/netAppAccounts/capacityPools/volumes@2025-01-01' = {
   parent: capacityPool
@@ -188,7 +189,7 @@ resource volumeUserDocs 'Microsoft.NetApp/netAppAccounts/capacityPools/volumes@2
 }
 
 //=========================================================
-// Volume for Group Documents Bucket
+// Volume for Group Documents (create bucket via Azure Portal after deployment)
 //=========================================================
 resource volumeGroupDocs 'Microsoft.NetApp/netAppAccounts/capacityPools/volumes@2025-01-01' = {
   parent: capacityPool
@@ -227,7 +228,7 @@ resource volumeGroupDocs 'Microsoft.NetApp/netAppAccounts/capacityPools/volumes@
 }
 
 //=========================================================
-// Volume for Public Documents Bucket
+// Volume for Public Documents (create bucket via Azure Portal after deployment)
 //=========================================================
 resource volumePublicDocs 'Microsoft.NetApp/netAppAccounts/capacityPools/volumes@2025-01-01' = {
   parent: capacityPool

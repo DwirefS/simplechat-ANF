@@ -1,12 +1,11 @@
 # Site settings
-title: Simple Chat Documentation
+title: SimpleChat-ANF | Azure AI Accelerator
 email: simplechat@microsoft.com
 description: >-
-  Documentation for Simple Chat - a comprehensive, web-based platform for secure
-  and context-aware interactions with generative AI models using Azure OpenAI
-  and Retrieval-Augmented Generation (RAG) capabilities.
-baseurl: "/simplechat"   # adjust if your site lives under a subpath
-url: "https://microsoft.github.io"  # replace if using a custom domain
+  Azure AI Accelerator powered by Azure NetApp Files - Enterprise-grade storage
+  for RAG workloads with multi-protocol access (NFS, SMB, Object REST API).
+baseurl: "/simplechat-ANF"
+url: "https://DwirefS.github.io"
 lang: en
 
 # Theme configuration (using local theme files)
@@ -31,8 +30,8 @@ favicon: /images/favicon.ico
 
 # GitHub integration
 github:
-  repository_url: https://github.com/microsoft/simplechat
-  repository_name: microsoft/simplechat
+  repository_url: https://github.com/DwirefS/simplechat-ANF
+  repository_name: DwirefS/simplechat-ANF
 
 # Contact information
 contact:
@@ -52,6 +51,9 @@ navigation:
     - title: Home
       url: /
       icon: bi bi-house-fill
+    - title: Azure NetApp Files
+      url: /azure-netapp-files/
+      icon: bi bi-hdd-network
     - title: Getting Started
       url: /setup_instructions/
       icon: bi bi-rocket-takeoff
@@ -63,11 +65,14 @@ navigation:
       icon: bi bi-question-circle
   external_links:
     - title: GitHub Repository
+      url: https://github.com/DwirefS/simplechat-ANF
+      icon: bi bi-github
+    - title: Azure NetApp Files Docs
+      url: https://learn.microsoft.com/en-us/azure/azure-netapp-files/
+      icon: bi bi-book
+    - title: Parent Repo (Microsoft)
       url: https://github.com/microsoft/simplechat
       icon: bi bi-github
-    - title: Contact
-      url: mailto:simplechat@microsoft.com
-      icon: bi bi-envelope me-2
   external_links_force_menu: false
   external_links_menu_name: "External Links"
 

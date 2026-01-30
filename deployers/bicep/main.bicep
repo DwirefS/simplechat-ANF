@@ -153,11 +153,13 @@ param deployAzureNetAppFiles bool = false
 - Standard: For static web content, file shares, database backups
 - Premium: Sub-millisecond latency for enterprise apps, AI workloads
 - Ultra: Most performance-intensive applications
+- Flexible: Independently set throughput and capacity for custom performance
 - Default is Premium''')
 @allowed([
   'Standard'
   'Premium'
   'Ultra'
+  'Flexible'
 ])
 param anfServiceLevel string = 'Premium'
 

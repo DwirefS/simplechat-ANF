@@ -1,74 +1,175 @@
 ---
 layout: page
-title: "Simple Chat Documentation"
-description: "Welcome to the official documentation for Simple Chat - a comprehensive platform for AI-powered conversations and document intelligence."
+title: "SimpleChat-ANF | Azure AI Accelerator"
+description: "Enterprise-grade AI chatbot accelerator powered by Azure NetApp Files and Azure OpenAI"
 ---
 
-The **Simple Chat Application** is a comprehensive, web-based platform designed to facilitate secure and context-aware interactions with generative AI models, specifically leveraging **Azure OpenAI**. Its central feature is **Retrieval-Augmented Generation (RAG)**, which significantly enhances AI interactions by allowing users to ground conversations in their own data. Users can upload personal ("Your Workspace") or shared group ("Group Workspaces") documents, which are processed using **Azure AI Document Intelligence**, chunked intelligently based on content type, vectorized via **Azure OpenAI Embeddings**, and indexed into **Azure AI Search** for efficient hybrid retrieval (semantic + keyword).
+<div style="text-align: center; margin-bottom: 2rem;">
+  <img src="https://learn.microsoft.com/en-us/azure/azure-netapp-files/media/azure-netapp-files/azure-netapp-files-logo.png" alt="Azure NetApp Files" style="max-width: 300px; margin-bottom: 1rem;">
+  <h2 style="color: #0078d4;">Azure + NetApp = Better Together</h2>
+</div>
 
-Built with modularity in mind, the application offers a suite of powerful **optional features** that can be enabled via administrative settings. These include integrating **Azure AI Content Safety** for governance, providing **Image Generation** capabilities (DALL-E), processing **Video** (via Azure Video Indexer) and **Audio** (via Azure Speech Service) files for RAG, implementing **Document Classification** schemes, collecting **User Feedback**, enabling **Conversation Archiving** for compliance, extracting **AI-driven Metadata**, and offering **Enhanced Citations** linked directly to source documents stored in Azure Storage.
+## Azure AI Accelerator with Enterprise Storage
 
-The application utilizes **Azure Cosmos DB** for storing conversations, metadata, and settings, and is secured using **Azure Active Directory (Entra ID)** for authentication and fine-grained Role-Based Access Control (RBAC) via App Roles. Designed for enterprise use, it runs reliably on **Azure App Service** and supports deployment in both **Azure Commercial** and **Azure Government** cloud environments, offering a versatile tool for knowledge discovery, content generation, and collaborative AI-powered tasks within a secure, customizable, and Azure-native framework.
+**SimpleChat-ANF** extends Microsoft's [SimpleChat](https://github.com/microsoft/simplechat) demo with **Azure NetApp Files**, delivering enterprise-grade storage for AI and RAG workloads.
 
-## Features
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 2rem 0;">
 
-- **Chat with AI**: Interact with an AI model based on Azure OpenAI’s GPT and Thinking models.
+<div style="border: 1px solid #ddd; border-radius: 8px; padding: 1.5rem; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+<h3 style="margin-top: 0; color: #0078d4;">Multi-Protocol Access</h3>
+<p>Access the same data simultaneously via <strong>NFS</strong>, <strong>SMB</strong>, and <strong>Object REST API</strong> (S3-compatible). One copy of data serves all workloads.</p>
+</div>
 
-- **RAG with Hybrid Search**: Upload documents and perform hybrid searches (vector + keyword), retrieving relevant information from your files to augment AI responses.
+<div style="border: 1px solid #ddd; border-radius: 8px; padding: 1.5rem; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+<h3 style="margin-top: 0; color: #0078d4;">Zero Data Movement</h3>
+<p>Enterprise NAS data is directly accessible to AI applications. No ETL pipelines, no data duplication, no waiting.</p>
+</div>
 
-- **Document Management**: Upload, store, and manage multiple versions of documents—personal ("Your Workspace") or group-level ("Group Workspaces").
+<div style="border: 1px solid #ddd; border-radius: 8px; padding: 1.5rem; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+<h3 style="margin-top: 0; color: #0078d4;">Powered by ONTAP</h3>
+<p>NetApp ONTAP delivers instant snapshots, cross-region replication, storage tiering, and consistent sub-millisecond latency.</p>
+</div>
 
-- **Group Management**: Create and join groups to share access to group-specific documents, enabling collaboration with Role-Based Access Control (RBAC).
+<div style="border: 1px solid #ddd; border-radius: 8px; padding: 1.5rem; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+<h3 style="margin-top: 0; color: #0078d4;">Azure AI Integration</h3>
+<p>Native integration with Azure AI Search, Azure Databricks, Microsoft Fabric OneLake, and Azure AI Foundry.</p>
+</div>
 
-- **Ephemeral (Single-Convo) Documents**: Upload temporary documents available only during the current chat session, without persistent storage in Azure AI Search.
+</div>
 
-- **Conversation Archiving (Optional)**: Retain copies of user conversations—even after deletion from the UI—in a dedicated Cosmos DB container for audit, compliance, or legal requirements.
+---
 
-- **Content Safety (Optional)**: Integrate Azure AI Content Safety to review every user message *before* it reaches AI models, search indexes, or image generation services. Enforce custom filters and compliance policies, with an optional `SafetyAdmin` role for viewing violations.
+## Enterprise Data Workflow
 
-- **Feedback System (Optional)**: Allow users to rate AI responses (thumbs up/down) and provide contextual comments on negative feedback. Includes user and admin dashboards, governed by an optional `FeedbackAdmin` role.
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                     Enterprise Data Workflow                         │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│   ┌──────────────┐                                                   │
+│   │ Windows Users│──── SMB ────┐                                     │
+│   │ (file drops) │             │                                     │
+│   └──────────────┘             │                                     │
+│                                ▼                                     │
+│   ┌──────────────┐      ┌─────────────┐      ┌──────────────┐       │
+│   │ Linux/Data   │─NFS─▶│  ANF Volume │◀─S3──│  AI Apps     │       │
+│   │ Science      │      │  (one copy) │      │  (SimpleChat)│       │
+│   └──────────────┘      └─────────────┘      └──────────────┘       │
+│                                ▲                                     │
+│   ┌──────────────┐             │                                     │
+│   │ Backup/DR    │── Snapshot ─┘                                     │
+│   │ Operations   │                                                   │
+│   └──────────────┘                                                   │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
-- **Bing Web Search (Optional)**: Augment AI responses with live Bing search results, providing up-to-date information. Configurable via Admin Settings.
+**The value:** Documents on your enterprise file shares can power RAG applications immediately. Drop a file on the SMB share, query it in the AI chatbot seconds later.
 
-- **Image Generation (Optional)**: Enable on-demand image creation using Azure OpenAI's DALL-E models, controlled via Admin Settings.
+---
 
-- **Video Extraction (Optional)**: Utilize Azure Video Indexer to transcribe speech and perform Optical Character Recognition (OCR) on video frames. Segments are timestamp-chunked for precise retrieval and enhanced citations linking back to the video timecode.
+## Why Azure NetApp Files for AI?
 
-- **Audio Extraction (Optional)**: Leverage Azure Speech Service to transcribe audio files into timestamped text chunks, making audio content searchable and enabling enhanced citations linked to audio timecodes.
+| Capability | Benefit |
+|------------|---------|
+| **Sub-Millisecond Latency** | Ultra-fast document retrieval for real-time AI responses |
+| **Up to 4,500 MiB/s Throughput** | Large-scale document processing and model training |
+| **Unified Data Platform** | Train models, run inference, serve users from one data source |
+| **Enterprise Compliance** | SAP HANA, GDPR, HIPAA, SOC certified |
+| **Azure-Native** | First-party Azure service, fully integrated with Azure ecosystem |
 
-- **Document Classification (Optional)**: Admins define custom classification types and associated colors. Users tag uploaded documents with these labels, which flow through to AI conversations, providing lineage and insight into data sensitivity or type.
+---
 
-- **Enhanced Citation (Optional)**: Store processed, chunked files in Azure Storage (organized into user- and document-scoped folders). Display interactive citations in the UI—showing page numbers or timestamps—that link directly to the source document preview.
+## Service Tiers
 
-- **Metadata Extraction (Optional)**: Apply an AI model (configurable GPT model via Admin Settings) to automatically generate keywords, two-sentence summaries, and infer author/date for uploaded documents. Allows manual override for richer search context.
+| Tier | Throughput | Use Case |
+|------|------------|----------|
+| **Standard** | 16 MiB/s per TiB | Cost-optimized, archival |
+| **Premium** | 64 MiB/s per TiB | General-purpose, recommended for RAG |
+| **Ultra** | 128 MiB/s per TiB | High-performance, real-time AI |
+| **Flexible** | 1-4,500 MiB/s | Independent throughput & capacity tuning |
 
-- **File Processing Logs (Optional)**: Enable verbose logging for all ingestion pipelines (workspaces and ephemeral chat uploads) to aid in debugging, monitoring, and auditing file processing steps.
+---
 
-- **Redis Cache (Optional)**: Integrate Azure Cache for Redis to provide a distributed, high-performance session store. This enables true horizontal scaling and high availability by decoupling user sessions from individual app instances.
+## Quick Start
 
-- **Authentication & RBAC**: Secure access via Azure Active Directory (Entra ID) using MSAL. Supports Managed Identities for Azure service authentication, group-based controls, and custom application roles (`Admin`, `User`, `CreateGroup`, `SafetyAdmin`, `FeedbackAdmin`).
+### Deploy with Azure NetApp Files
 
-- **Supported File Types**:
+```powershell
+# Clone the repository
+git clone https://github.com/DwirefS/simplechat-ANF.git
+cd simplechat-ANF/deployers
 
-  -   Text: `txt`, `md`, `html`, `json`
+# Deploy infrastructure with ANF
+azd up --parameters deployAzureNetAppFiles=true anfServiceLevel=Premium
+```
 
-  *   Documents: `pdf`, `docx`, `pptx`, `xlsx`, `xlsm`, `xls`, `csv`
-  *   Images: `jpg`, `jpeg`, `png`, `bmp`, `tiff`, `tif`, `heif`
-  *   Video: `mp4`, `mov`, `avi`, `wmv`, `mkv`, `webm`
-  *   Audio: `mp3`, `wav`, `ogg`, `aac`, `flac`, `m4a`
+### Configure Object REST API
 
-## Architecture-diagram
+After deployment, enable the Object REST API in Azure Portal:
+
+1. **Enroll in Preview** - Submit [waitlist request](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-access-configure)
+2. **Generate Certificate** - Create PEM-formatted SSL certificate
+3. **Create Bucket** - Configure bucket on ANF volume
+4. **Generate Credentials** - Create access key and secret key
+5. **Configure Application** - Set environment variables
+
+See the [Complete Deployment Guide](https://github.com/DwirefS/simplechat-ANF/blob/main/DEPLOY_STEPS.md) for detailed instructions.
+
+---
+
+## Architecture
 
 ![Architecture](./images/architecture.png)
 
-## Demos
+---
 
-<a href="#simple-chat" style="text-decoration: none;">Return to top</a>
+## Azure AI Services Integration
 
-### Upload document and review metadata
+| Service | Integration |
+|---------|-------------|
+| **Azure AI Search** | S3-compatible data source indexer for RAG |
+| **Azure Databricks** | Spark S3A connector for analytics |
+| **Microsoft Fabric OneLake** | Shortcuts to virtualize ANF data |
+| **Azure AI Foundry** | Direct access to training data |
+| **Azure OpenAI** | LLM for chat responses |
+| **Azure Document Intelligence** | PDF and image extraction |
 
-![Upload Document Demo](./images/UploadDocumentDemo.gif)
+---
 
-### Classify document and chat with document
+## Resources
 
-![Chat with Searching your Documents Demo](./images/ChatwithSearchingYourDocsDemo.gif)
+### Official Documentation
+
+- [Azure NetApp Files Documentation](https://learn.microsoft.com/en-us/azure/azure-netapp-files/)
+- [Object REST API Overview](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-introduction)
+- [Configure Object REST API](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-access-configure)
+- [Connect OneLake to ANF](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-onelake)
+- [Connect Azure Databricks to ANF](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-databricks)
+
+### Project Resources
+
+- [GitHub Repository](https://github.com/DwirefS/simplechat-ANF)
+- [Deployment Guide](https://github.com/DwirefS/simplechat-ANF/blob/main/DEPLOY_STEPS.md)
+- [Parent Repository (Microsoft SimpleChat)](https://github.com/microsoft/simplechat)
+
+---
+
+## About This Project
+
+**SimpleChat-ANF** is an accelerator that pairs Microsoft's SimpleChat AI demo with Azure NetApp Files enterprise storage. This project demonstrates how existing enterprise NAS data can directly power AI applications without data movement or duplication.
+
+### Key Points
+
+- **100% backwards compatible** with original SimpleChat
+- **Zero deletions** from parent repository
+- **Azure Blob Storage** remains available as default option
+- **Open source** under MIT License
+
+---
+
+<div style="text-align: center; margin-top: 3rem; padding: 2rem; background: #f8f9fa; border-radius: 8px;">
+  <p style="font-size: 1.2rem; margin-bottom: 1rem;"><strong>Ready to get started?</strong></p>
+  <a href="https://github.com/DwirefS/simplechat-ANF" style="display: inline-block; background: #0078d4; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; margin-right: 1rem;">View on GitHub</a>
+  <a href="https://github.com/DwirefS/simplechat-ANF/blob/main/DEPLOY_STEPS.md" style="display: inline-block; background: #28a745; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none;">Deployment Guide</a>
+</div>

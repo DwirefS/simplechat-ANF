@@ -1,8 +1,7 @@
-<!-- BEGIN LICENSE.MD BLOCK -->
-
 MIT License
 
-Copyright (c) 2024 Paul Lizer
+Copyright (c) 2024 Paul Lizer (Original SimpleChat)
+Copyright (c) 2025 SimpleChat-ANF Contributors (Azure NetApp Files Integration)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -21,3 +20,42 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+## Project Attribution
+
+This project is a fork of [Microsoft SimpleChat](https://github.com/microsoft/simplechat),
+extended with Azure NetApp Files integration for enterprise AI workloads.
+
+### Parent Repository
+- **Name:** SimpleChat
+- **Owner:** Microsoft Corporation
+- **URL:** https://github.com/microsoft/simplechat
+- **License:** MIT
+
+### This Fork
+- **Name:** SimpleChat-ANF
+- **Purpose:** Demonstrate Azure NetApp Files as enterprise storage for AI/RAG workloads
+- **Integration:** Azure NetApp Files Object REST API, NFS, SMB protocols
+
+## Disclaimer
+
+This software is provided for demonstration and educational purposes. The authors
+and contributors make no warranties regarding the suitability of this software
+for production use.
+
+- Azure NetApp Files Object REST API is currently in PREVIEW
+- Users are responsible for their own Azure resource costs
+- Users are responsible for security configuration and compliance
+- This project is not officially supported by Microsoft or NetApp
+
+For production deployments, please consult the official documentation:
+- [Azure NetApp Files](https://learn.microsoft.com/en-us/azure/azure-netapp-files/)
+- [Microsoft SimpleChat](https://github.com/microsoft/simplechat)
+
+## Trademarks
+
+- Microsoft, Azure, and Azure NetApp Files are trademarks of Microsoft Corporation
+- NetApp and ONTAP are trademarks of NetApp, Inc.
+- All other trademarks are property of their respective owners

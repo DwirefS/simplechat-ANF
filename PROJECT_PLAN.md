@@ -1,234 +1,324 @@
-# SimpleChat + Azure NetApp Files Integration - Project Plan
+# SimpleChat-ANF Project Plan
 
 ## Executive Summary
 
-This project integrates Azure NetApp Files (ANF) as the enterprise storage layer for the SimpleChat AI chatbot application. The integration leverages ANF's Object REST API (S3-compatible) to replace Azure Blob Storage while enabling multi-protocol access (NFS/SMB) for enterprise workflows.
+This project adds **Azure NetApp Files (ANF)** as the enterprise storage layer to the existing **Microsoft SimpleChat** AI chatbot demo. The goal is to demonstrate ANF's value proposition for AI workloads while preserving all existing SimpleChat functionality.
+
+**Key Principle: ADD, DON'T DELETE** - All existing SimpleChat code, infrastructure, and functionality remains intact.
 
 ---
 
-## Project Phases
+## Project Architecture
 
-### Phase 1: Infrastructure Foundation (Week 1)
-
-#### Tasks
-
-| # | Task | Status | Priority | Assignee |
-|---|------|--------|----------|----------|
-| 1.1 | Create Azure NetApp Files Bicep module | ✅ Done | High | - |
-| 1.2 | Add ANF subnet to virtual network module | 🔲 Pending | High | - |
-| 1.3 | Update main.bicep with ANF deployment | 🔲 Pending | High | - |
-| 1.4 | Create ANF Terraform module | 🔲 Pending | Medium | - |
-| 1.5 | Update deployment parameters | 🔲 Pending | High | - |
-| 1.6 | Test infrastructure deployment | 🔲 Pending | High | - |
-
-#### Deliverables
-- [x] `deployers/bicep/modules/azureNetAppFiles.bicep`
-- [ ] Updated `deployers/bicep/modules/virtualNetwork.bicep`
-- [ ] Updated `deployers/bicep/main.bicep`
-- [ ] `deployers/terraform/modules/azure_netapp_files.tf`
-
----
-
-### Phase 2: Application Integration (Week 2)
-
-#### Tasks
-
-| # | Task | Status | Priority | Assignee |
-|---|------|--------|----------|----------|
-| 2.1 | Create ANF storage service module | 🔲 Pending | High | - |
-| 2.2 | Create ANF Semantic Kernel plugin | 🔲 Pending | High | - |
-| 2.3 | Add storage abstraction layer | 🔲 Pending | High | - |
-| 2.4 | Update document upload functions | 🔲 Pending | High | - |
-| 2.5 | Update document download functions | 🔲 Pending | High | - |
-| 2.6 | Update enhanced citations module | 🔲 Pending | Medium | - |
-| 2.7 | Add boto3 to requirements.txt | 🔲 Pending | High | - |
-
-#### Deliverables
-- [ ] `application/single_app/services/anf_storage_service.py`
-- [ ] `application/single_app/semantic_kernel_plugins/anf_storage_plugin.py`
-- [ ] `application/single_app/services/storage_factory.py`
-- [ ] Updated `application/single_app/functions_documents.py`
-- [ ] Updated `application/single_app/requirements.txt`
-
----
-
-### Phase 3: Configuration & Admin UI (Week 3)
-
-#### Tasks
-
-| # | Task | Status | Priority | Assignee |
-|---|------|--------|----------|----------|
-| 3.1 | Add ANF environment variables | 🔲 Pending | High | - |
-| 3.2 | Update config.py for ANF | 🔲 Pending | High | - |
-| 3.3 | Add ANF settings to admin UI | 🔲 Pending | Medium | - |
-| 3.4 | Create storage toggle (Blob/ANF) | 🔲 Pending | Medium | - |
-| 3.5 | Update example.env template | 🔲 Pending | Medium | - |
-| 3.6 | Add ANF health check endpoint | 🔲 Pending | Low | - |
-
-#### Deliverables
-- [ ] Updated `application/single_app/config.py`
-- [ ] Updated `application/single_app/example.env`
-- [ ] Updated admin control center UI
-- [ ] ANF connection test endpoint
-
----
-
-### Phase 4: Azure AI Search Integration (Week 4)
-
-#### Tasks
-
-| # | Task | Status | Priority | Assignee |
-|---|------|--------|----------|----------|
-| 4.1 | Configure ANF as AI Search data source | 🔲 Pending | High | - |
-| 4.2 | Update search indexer for ANF | 🔲 Pending | High | - |
-| 4.3 | Test vector search with ANF data | 🔲 Pending | High | - |
-| 4.4 | Update RAG retrieval functions | 🔲 Pending | Medium | - |
-| 4.5 | Performance benchmarking | 🔲 Pending | Medium | - |
-
-#### Deliverables
-- [ ] ANF-based Azure AI Search data source
-- [ ] Updated indexer configuration
-- [ ] Performance benchmark report
-
----
-
-### Phase 5: Testing & Documentation (Week 5)
-
-#### Tasks
-
-| # | Task | Status | Priority | Assignee |
-|---|------|--------|----------|----------|
-| 5.1 | Unit tests for ANF service | 🔲 Pending | High | - |
-| 5.2 | Integration tests | 🔲 Pending | High | - |
-| 5.3 | End-to-end testing | 🔲 Pending | High | - |
-| 5.4 | Update deployment documentation | 🔲 Pending | Medium | - |
-| 5.5 | Create demo scripts | 🔲 Pending | Medium | - |
-| 5.6 | Record demo video | 🔲 Pending | Low | - |
-
-#### Deliverables
-- [ ] Test suite for ANF integration
-- [ ] Updated README.md
-- [ ] Demo scripts and documentation
-- [ ] Demo video
-
----
-
-## Technical Specifications
-
-### Azure NetApp Files Configuration
-
-| Setting | Value | Notes |
-|---------|-------|-------|
-| Service Level | Premium | Sub-millisecond latency |
-| Capacity Pool | 4 TiB | Minimum required |
-| Volume Size | 100 GiB | Per document bucket |
-| Protocol | NFSv4.1 | Primary access |
-| Object REST API | Enabled | S3-compatible access |
-| Cool Access | Optional | Cost optimization |
-
-### Volume Structure
+### Full SimpleChat + ANF Architecture
 
 ```
-ANF Account: simplechat-<env>-anf
-└── Capacity Pool: simplechat-<env>-pool (4 TiB, Premium)
-    ├── Volume: user-documents (100 GiB)
-    │   └── Bucket: user-documents
-    ├── Volume: group-documents (100 GiB)
-    │   └── Bucket: group-documents
-    └── Volume: public-documents (100 GiB)
-        └── Bucket: public-documents
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           SimpleChat-ANF                                     │
+│                    (AI Chatbot with Azure NetApp Files)                      │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         Azure App Service                                    │
+│                    (Flask Application - single_app)                          │
+│  ┌──────────────────────────────────────────────────────────────────────┐   │
+│  │  • app.py (Entry point)                                               │   │
+│  │  • config.py (Azure client configuration)                             │   │
+│  │  • functions_documents.py (Document processing)                       │   │
+│  │  • functions_search.py (AI Search integration)                        │   │
+│  │  • route_backend_*.py (API endpoints)                                 │   │
+│  │  • semantic_kernel_plugins/ (AI plugins)                              │   │
+│  └──────────────────────────────────────────────────────────────────────┘   │
+└───────┬──────────────┬──────────────┬──────────────┬──────────────┬─────────┘
+        │              │              │              │              │
+        ▼              ▼              ▼              ▼              ▼
+┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐
+│ Azure OpenAI │ │ Azure AI     │ │ Azure        │ │ Storage      │ │ Azure        │
+│              │ │ Search       │ │ Cosmos DB    │ │ Layer        │ │ Key Vault    │
+│ • GPT Models │ │ • Vector     │ │ • Metadata   │ │              │ │ • Secrets    │
+│ • Embeddings │ │   Index      │ │ • Convos     │ │ ┌──────────┐ │ │ • Keys       │
+│              │ │ • Semantic   │ │ • Messages   │ │ │Blob      │ │ │              │
+│              │ │   Search     │ │ • Documents  │ │ │Storage   │ │ │              │
+└──────────────┘ └──────────────┘ └──────────────┘ │ │(existing)│ │ └──────────────┘
+                                                   │ └──────────┘ │
+                                                   │      OR      │
+                                                   │ ┌──────────┐ │
+                                                   │ │Azure     │ │
+                                                   │ │NetApp    │ │
+                                                   │ │Files     │ │
+                                                   │ │(NEW)     │ │
+                                                   │ │• S3 API  │ │
+                                                   │ │• NFS     │ │
+                                                   │ │• SMB     │ │
+                                                   │ └──────────┘ │
+                                                   └──────────────┘
+        │              │              │              │              │
+        ▼              ▼              ▼              ▼              ▼
+┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐
+│ Azure Doc    │ │ Azure        │ │ Azure        │ │ Azure        │ │ Azure        │
+│ Intelligence │ │ Content      │ │ Speech       │ │ Video        │ │ Redis        │
+│              │ │ Safety       │ │ Service      │ │ Indexer      │ │ Cache        │
+│ • PDF        │ │ (Optional)   │ │ (Optional)   │ │ (Optional)   │ │ (Optional)   │
+│ • Office     │ │              │ │ • Audio      │ │ • Video      │ │ • Sessions   │
+│ • Images     │ │              │ │   Transcribe │ │   Process    │ │              │
+└──────────────┘ └──────────────┘ └──────────────┘ └──────────────┘ └──────────────┘
 ```
 
-### Network Requirements
+---
 
-| Subnet | CIDR | Purpose |
-|--------|------|---------|
-| ANFSubnet | 10.0.3.0/24 | Delegated to Microsoft.NetApp/volumes |
-| AppServiceIntegration | 10.0.0.0/24 | App Service VNet integration |
-| PrivateEndpoints | 10.0.2.0/24 | Private endpoints |
+## All SimpleChat Components (KEEP ALL)
+
+### Core Services (Required)
+
+| Service | Bicep Module | Purpose | Status |
+|---------|--------------|---------|--------|
+| Azure App Service | `appService.bicep` | Host Flask application | KEEP |
+| Azure Container Registry | `containerRegistry.bicep` | Docker images | KEEP |
+| Azure Cosmos DB | `cosmosDb.bicep` | Metadata, conversations | KEEP |
+| Azure Blob Storage | `storageAccount.bicep` | Document storage (existing) | KEEP |
+| **Azure NetApp Files** | `azureNetAppFiles.bicep` | Document storage (new) | **ADD** |
+| Azure AI Search | `search.bicep` | Vector/semantic search | KEEP |
+| Azure OpenAI | `openAI.bicep` | LLM capabilities | KEEP |
+| Azure Document Intelligence | `documentIntelligence.bicep` | Document extraction | KEEP |
+| Azure Key Vault | `keyVault.bicep` | Secrets management | KEEP |
+| Log Analytics | `logAnalyticsWorkspace.bicep` | Monitoring | KEEP |
+| Application Insights | `applicationInsights.bicep` | Telemetry | KEEP |
+
+### Optional Services
+
+| Service | Bicep Module | Purpose | Status |
+|---------|--------------|---------|--------|
+| Azure Cache for Redis | `redisCache.bicep` | Session caching | KEEP |
+| Azure Content Safety | `contentSafety.bicep` | Content filtering | KEEP |
+| Azure Speech Service | `speechService.bicep` | Audio transcription | KEEP |
+| Azure Video Indexer | `videoIndexer.bicep` | Video processing | KEEP |
+| Private Networking | `privateNetworking.bicep` | VNet integration | KEEP |
+| Virtual Network | `virtualNetwork.bicep` | Network infrastructure | KEEP (+ ANF subnet) |
 
 ---
 
-## Code Changes Summary
+## Infrastructure Files (All Required)
 
-### New Files
+### Bicep Deployment (`deployers/bicep/`)
 
-| File | Purpose |
-|------|---------|
-| `deployers/bicep/modules/azureNetAppFiles.bicep` | ANF infrastructure |
-| `application/single_app/services/anf_storage_service.py` | ANF storage operations |
-| `application/single_app/semantic_kernel_plugins/anf_storage_plugin.py` | ANF Semantic Kernel plugin |
-| `application/single_app/services/storage_factory.py` | Storage abstraction |
+```
+deployers/bicep/
+├── main.bicep                          # Main orchestrator (UPDATED for ANF)
+├── main.parameters.json                # Parameters (UPDATED for ANF)
+└── modules/
+    ├── appService.bicep                # KEEP
+    ├── applicationInsights.bicep       # KEEP
+    ├── azureNetAppFiles.bicep          # NEW - ANF module
+    ├── containerRegistry.bicep         # KEEP
+    ├── contentSafety.bicep             # KEEP
+    ├── cosmosDb.bicep                  # KEEP
+    ├── diagnosticSettings.bicep        # KEEP
+    ├── documentIntelligence.bicep      # KEEP
+    ├── keyVault.bicep                  # KEEP
+    ├── logAnalyticsWorkspace.bicep     # KEEP
+    ├── openAI.bicep                    # KEEP
+    ├── privateNetworking.bicep         # KEEP
+    ├── redisCache.bicep                # KEEP
+    ├── search.bicep                    # KEEP
+    ├── setPermissions.bicep            # KEEP
+    ├── speechService.bicep             # KEEP
+    ├── storageAccount.bicep            # KEEP (existing blob storage)
+    ├── videoIndexer.bicep              # KEEP
+    └── virtualNetwork.bicep            # UPDATED (added ANF subnet)
+```
 
-### Modified Files
+### Terraform Deployment (`deployers/terraform/`)
 
-| File | Changes |
-|------|---------|
-| `deployers/bicep/main.bicep` | Add ANF module deployment |
-| `deployers/bicep/modules/virtualNetwork.bicep` | Add ANF subnet |
-| `application/single_app/config.py` | ANF configuration |
-| `application/single_app/functions_documents.py` | Storage abstraction |
-| `application/single_app/route_backend_control_center.py` | ANF admin settings |
-| `application/single_app/requirements.txt` | Add boto3 |
+```
+deployers/terraform/
+├── main.tf                             # KEEP + ADD ANF module
+├── variables.tf                        # KEEP + ADD ANF variables
+├── outputs.tf                          # KEEP + ADD ANF outputs
+└── modules/
+    └── azure_netapp_files/             # NEW - ANF module (to create)
+        ├── main.tf
+        ├── variables.tf
+        └── outputs.tf
+```
 
 ---
 
-## Risk Assessment
+## Application Code (All Required)
 
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| Object REST API regional availability | Medium | High | Check region support before deployment |
-| Performance degradation | Low | Medium | Use Premium/Ultra tier |
-| Cost overrun | Medium | Medium | Use cool access tier, right-size volumes |
-| Integration complexity | Medium | Medium | Implement storage abstraction layer |
-| Breaking existing functionality | Low | High | Maintain backwards compatibility with toggle |
+### Flask Application (`application/single_app/`)
+
+```
+application/single_app/
+├── app.py                              # KEEP - Flask entry point
+├── config.py                           # KEEP + ADD ANF configuration
+├── functions_documents.py              # KEEP + ADD ANF upload function
+├── functions_*.py                      # KEEP - All function files
+├── route_backend_*.py                  # KEEP - All route files
+├── services/                           # NEW - Add services folder
+│   └── anf_storage_service.py          # NEW - ANF storage service
+├── semantic_kernel_plugins/
+│   ├── blob_storage_plugin.py          # KEEP - Existing blob plugin
+│   ├── anf_storage_plugin.py           # NEW - ANF plugin
+│   └── [other plugins...]              # KEEP - All other plugins
+├── templates/                          # KEEP - All templates
+├── static/                             # KEEP - All static files
+├── requirements.txt                    # KEEP + ADD boto3
+├── Dockerfile                          # KEEP
+└── example.env                         # KEEP + ADD ANF variables
+```
+
+### External Applications (`application/external_apps/`)
+
+```
+application/external_apps/
+├── bulkloader/                         # KEEP - Bulk document upload
+│   ├── main.py
+│   └── example.env
+└── databaseseeder/                     # KEEP - Database seeding
+    ├── main.py
+    └── example.env
+```
+
+---
+
+## Implementation Phases
+
+### Phase 1: Infrastructure (Completed)
+
+| Task | Status | Files |
+|------|--------|-------|
+| Create ANF Bicep module | ✅ Done | `modules/azureNetAppFiles.bicep` |
+| Update VNet for ANF subnet | ✅ Done | `modules/virtualNetwork.bicep` |
+| Update main.bicep for ANF | ✅ Done | `main.bicep` |
+| Add ANF deployment parameters | ✅ Done | `main.bicep` |
+| Add ANF outputs | ✅ Done | `main.bicep` |
+
+### Phase 2: Application Code (Next)
+
+| Task | Status | Files |
+|------|--------|-------|
+| Create ANF storage service | 🔲 Pending | `services/anf_storage_service.py` |
+| Create ANF storage plugin | 🔲 Pending | `semantic_kernel_plugins/anf_storage_plugin.py` |
+| Add storage abstraction/toggle | 🔲 Pending | `config.py`, `functions_documents.py` |
+| Add boto3 dependency | 🔲 Pending | `requirements.txt` |
+| Update example.env | 🔲 Pending | `example.env` |
+
+### Phase 3: Configuration & Admin (Future)
+
+| Task | Status | Files |
+|------|--------|-------|
+| Add ANF settings to admin UI | 🔲 Pending | `route_backend_control_center.py` |
+| Add ANF connection test | 🔲 Pending | `functions_admin.py` |
+| Update settings templates | 🔲 Pending | `templates/admin/` |
+
+### Phase 4: Azure AI Search Integration (Future)
+
+| Task | Status | Files |
+|------|--------|-------|
+| Configure ANF data source | 🔲 Pending | Search configuration |
+| Update indexer for ANF | 🔲 Pending | `functions_search.py` |
+| Test vector search with ANF | 🔲 Pending | Testing |
+
+### Phase 5: Terraform & Testing (Future)
+
+| Task | Status | Files |
+|------|--------|-------|
+| Create ANF Terraform module | 🔲 Pending | `terraform/modules/azure_netapp_files/` |
+| Update main.tf | 🔲 Pending | `terraform/main.tf` |
+| End-to-end testing | 🔲 Pending | Testing |
+| Documentation updates | 🔲 Pending | `README.md`, docs/ |
+
+---
+
+## Storage Configuration Toggle
+
+The application will support both Blob Storage and ANF via configuration:
+
+```python
+# config.py
+STORAGE_BACKEND = os.getenv('STORAGE_BACKEND', 'blob')  # 'blob' or 'anf'
+
+# When STORAGE_BACKEND='blob' - use existing Azure Blob Storage
+# When STORAGE_BACKEND='anf' - use Azure NetApp Files Object REST API
+```
+
+This ensures:
+1. **Backwards compatibility** - Default is existing Blob Storage
+2. **Easy switching** - Change one environment variable
+3. **Demo flexibility** - Show both options to customers
+
+---
+
+## ANF-Specific Configuration
+
+```bash
+# Azure NetApp Files Settings (add to example.env)
+STORAGE_BACKEND=anf                                    # Toggle: 'blob' or 'anf'
+ANF_OBJECT_API_ENDPOINT=https://<account>.blob.netapp.azure.com
+ANF_AUTH_TYPE=managed_identity                         # or 'key'
+ANF_ACCESS_KEY=<access-key>                            # if using key auth
+ANF_SECRET_KEY=<secret-key>                            # if using key auth
+ANF_SERVICE_LEVEL=Premium                              # Standard, Premium, Ultra
+ANF_USER_DOCUMENTS_BUCKET=user-documents
+ANF_GROUP_DOCUMENTS_BUCKET=group-documents
+ANF_PUBLIC_DOCUMENTS_BUCKET=public-documents
+```
+
+---
+
+## Demo Value Proposition
+
+### For Customers
+
+1. **Multi-Protocol Access**
+   - Application uses S3 API for document storage
+   - Data scientists access same data via NFS mount
+   - Business users access via SMB shares
+   - **No data duplication - single source of truth**
+
+2. **Enterprise Performance**
+   - Sub-millisecond latency for RAG retrieval
+   - Premium/Ultra tiers for AI workloads
+   - 4,500 MB/s throughput (Ultra tier)
+
+3. **Azure AI Native Integration**
+   - Azure AI Search indexes directly from ANF
+   - Azure AI Foundry native connector
+   - Seamless enterprise data integration
+
+4. **Cost Optimization**
+   - Cool access tier for inactive data
+   - Standard tier for cost-sensitive workloads
+   - No egress charges within Azure
 
 ---
 
 ## Success Criteria
 
-1. **Functional**: Documents upload/download via ANF Object REST API
-2. **Performance**: Latency <= 5ms for document operations
-3. **Compatibility**: Existing features work unchanged
-4. **Multi-Protocol**: Same data accessible via NFS and S3 API
-5. **Demo Ready**: Clear demonstration of ANF value proposition
+| Criteria | Measurement |
+|----------|-------------|
+| All SimpleChat features work | 100% existing functionality preserved |
+| ANF storage integration | Documents upload/download via S3 API |
+| Multi-protocol demo | Same data accessible via NFS, SMB, S3 |
+| One-click deployment | Bicep deploys all resources including ANF |
+| Customer demo ready | Clear value proposition presentation |
 
 ---
 
-## Dependencies
+## Next Steps
 
-### Azure Services
-- Azure NetApp Files (Standard/Premium/Ultra)
-- Azure Virtual Network with delegated subnet
-- Azure AI Search (for indexer integration)
-- Azure Key Vault (for credential storage)
-
-### Python Packages
-- `boto3` >= 1.34.0 (S3 SDK)
-- `botocore` >= 1.34.0
-
-### Bicep API Versions
-- `Microsoft.NetApp/netAppAccounts@2025-01-01`
-- `Microsoft.NetApp/netAppAccounts/capacityPools@2025-01-01`
-- `Microsoft.NetApp/netAppAccounts/capacityPools/volumes@2025-01-01`
+1. **Create ANF storage service** (`services/anf_storage_service.py`)
+2. **Create ANF storage plugin** (`semantic_kernel_plugins/anf_storage_plugin.py`)
+3. **Add storage toggle** in `config.py` and `functions_documents.py`
+4. **Test document upload** with ANF Object REST API
+5. **Update documentation** for deployment with ANF
 
 ---
 
-## Contact & Resources
+## References
 
-### Documentation
-- [CLOUD.md](./CLOUD.md) - Technical architecture
-- [Azure NetApp Files Docs](https://learn.microsoft.com/en-us/azure/azure-netapp-files/)
-- [Object REST API Guide](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-introduction)
-
-### Repository
-- Original: [microsoft/simplechat](https://github.com/microsoft/simplechat)
-- Fork: [DwirefS/simplechat-ANF](https://github.com/DwirefS/simplechat-ANF)
-
----
-
-## Revision History
-
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | 2026-01-29 | Claude | Initial project plan |
+- [SimpleChat Original](https://github.com/microsoft/simplechat)
+- [Azure NetApp Files](https://learn.microsoft.com/en-us/azure/azure-netapp-files/)
+- [ANF Object REST API](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-introduction)
+- [ANF Bicep Reference](https://learn.microsoft.com/en-us/azure/templates/microsoft.netapp/netappaccounts)
