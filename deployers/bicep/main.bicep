@@ -143,8 +143,40 @@ param deploySpeechService bool
 - Default is false''')
 param deployVideoIndexerService bool
 
+@description('''Enable deployment of Azure NetApp Files for enterprise storage.
+- Provides NFS, SMB, and S3-compatible Object REST API access
+- Requires private networking to be enabled
+- Default is false''')
+param deployAzureNetAppFiles bool = false
+
+@description('''Azure NetApp Files service level.
+- Standard: For static web content, file shares, database backups
+- Premium: Sub-millisecond latency for enterprise apps, AI workloads
+- Ultra: Most performance-intensive applications
+- Default is Premium''')
+@allowed([
+  'Standard'
+  'Premium'
+  'Ultra'
+])
+param anfServiceLevel string = 'Premium'
+
+@description('''Azure NetApp Files protocol type.
+- NFSv4.1: Linux/Unix access (recommended for AI workloads)
+- NFSv3: Legacy NFS support
+- SMB: Windows access
+- DualProtocol: Both NFS and SMB
+- Default is NFSv4.1''')
+@allowed([
+  'NFSv3'
+  'NFSv4.1'
+  'SMB'
+  'DualProtocol'
+])
+param anfProtocolType string = 'NFSv4.1'
+
 //=========================================================
-// variable declarations for the main deployment 
+// variable declarations for the main deployment
 //=========================================================
 var rgName = '${appName}-${environment}-rg'
 var requiredTags = { application: appName, environment: environment, 'azd-env-name': azdEnvironmentName }
@@ -173,16 +205,17 @@ resource rg 'Microsoft.Resources/resourceGroups@2022-09-01' = {
 }
 
 //=========================================================
-// Create Virtual Network if private networking is enabled
+// Create Virtual Network if private networking or ANF is enabled
+// ANF requires a delegated subnet even without private endpoints
 //=========================================================
-module virtualNetwork 'modules/virtualNetwork.bicep' = if (enablePrivateNetworking) {
+module virtualNetwork 'modules/virtualNetwork.bicep' = if (enablePrivateNetworking || deployAzureNetAppFiles) {
   scope: rg
   name: 'virtualNetwork'
   params: {
     location: location
     vNetName: vNetName
     addressSpaces: ['10.0.0.0/21']
-    subnetConfigs: [
+    subnetConfigs: concat([
       {
         name: 'AppServiceIntegration' // this subnet name must be present for app service vnet integration
         addressPrefix: '10.0.0.0/24'
@@ -195,7 +228,14 @@ module virtualNetwork 'modules/virtualNetwork.bicep' = if (enablePrivateNetworki
         enablePrivateEndpointNetworkPolicies: true
         enablePrivateLinkServiceNetworkPolicies: true
       }
-    ]
+    ], deployAzureNetAppFiles ? [
+      {
+        name: 'ANFSubnet' // this subnet is delegated to Microsoft.NetApp/volumes for Azure NetApp Files
+        addressPrefix: '10.0.3.0/24'
+        enablePrivateEndpointNetworkPolicies: true
+        enablePrivateLinkServiceNetworkPolicies: true
+      }
+    ] : [])
     tags: tags
   }
 }
@@ -534,6 +574,39 @@ module videoIndexerService 'modules/videoIndexer.bicep' = if (deployVideoIndexer
 }
 
 //=========================================================
+// Create Optional Resource - Azure NetApp Files
+// Provides enterprise storage with NFS, SMB, and S3-compatible Object REST API
+//=========================================================
+module azureNetAppFiles 'modules/azureNetAppFiles.bicep' = if (deployAzureNetAppFiles) {
+  name: 'azureNetAppFiles'
+  scope: rg
+  params: {
+    location: location
+    appName: appName
+    environment: environment
+    tags: tags
+    enableDiagLogging: enableDiagLogging
+    logAnalyticsId: logAnalytics.outputs.logAnalyticsId
+
+    keyVault: keyVault.outputs.keyVaultName
+    authenticationType: authenticationType
+    configureApplicationPermissions: configureApplicationPermissions
+
+    // Network configuration - ANF requires a delegated subnet
+    #disable-next-line BCP318 // value can't be null based on deployAzureNetAppFiles condition
+    vNetId: virtualNetwork.outputs.vNetId
+    #disable-next-line BCP318 // value can't be null based on deployAzureNetAppFiles condition
+    anfSubnetId: virtualNetwork.outputs.anfSubnetId
+
+    // ANF configuration
+    serviceLevel: anfServiceLevel
+    protocolType: anfProtocolType
+    enableCoolAccess: false
+    enableObjectApi: true
+  }
+}
+
+//=========================================================
 // configure permissions for managed identity to access resources
 //=========================================================
 module setPermissions 'modules/setPermissions.bicep' = if (configureApplicationPermissions) {
@@ -643,3 +716,17 @@ output var_webService string = appService.outputs.name
 // output values required for postup script in azure.yaml
 output var_enablePrivateNetworking bool = enablePrivateNetworking
 
+// Azure NetApp Files outputs
+output var_deployAzureNetAppFiles bool = deployAzureNetAppFiles
+#disable-next-line BCP318 // expect one value to be null
+output var_anfAccountName string = deployAzureNetAppFiles ? azureNetAppFiles.outputs.netAppAccountName : ''
+#disable-next-line BCP318 // expect one value to be null
+output var_anfCapacityPoolName string = deployAzureNetAppFiles ? azureNetAppFiles.outputs.capacityPoolName : ''
+#disable-next-line BCP318 // expect one value to be null
+output var_anfUserDocsVolumeName string = deployAzureNetAppFiles ? azureNetAppFiles.outputs.userDocsVolumeName : ''
+#disable-next-line BCP318 // expect one value to be null
+output var_anfGroupDocsVolumeName string = deployAzureNetAppFiles ? azureNetAppFiles.outputs.groupDocsVolumeName : ''
+#disable-next-line BCP318 // expect one value to be null
+output var_anfPublicDocsVolumeName string = deployAzureNetAppFiles ? azureNetAppFiles.outputs.publicDocsVolumeName : ''
+output var_anfServiceLevel string = anfServiceLevel
+output var_anfProtocolType string = anfProtocolType
