@@ -174,6 +174,47 @@ Azure NetApp Files brings enterprise-grade storage capabilities that enhance AI 
 | **Azure AI Integration** | Native integration with Azure AI Search, Databricks, OneLake |
 | **Enterprise Compliance** | SAP HANA, GDPR, HIPAA, SOC certified |
 
+### Enterprise Value Proposition
+
+**Direct Access to Existing Enterprise Data**
+
+Azure NetApp Files enables AI applications to directly consume data from enterprise NAS storage without requiring data movement or duplication:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                     Enterprise Data Workflow                         │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│   ┌──────────────┐                                                   │
+│   │ Windows Users│──── SMB ────┐                                     │
+│   │ (file drops) │             │                                     │
+│   └──────────────┘             │                                     │
+│                                ▼                                     │
+│   ┌──────────────┐      ┌─────────────┐      ┌──────────────┐       │
+│   │ Linux/Data   │─NFS─▶│  ANF Volume │◀─S3──│  AI Apps     │       │
+│   │ Science      │      │  (one copy) │      │  (SimpleChat)│       │
+│   └──────────────┘      └─────────────┘      └──────────────┘       │
+│                                ▲                                     │
+│   ┌──────────────┐             │                                     │
+│   │ Backup/DR    │── Snapshot ─┘                                     │
+│   │ Operations   │                                                   │
+│   └──────────────┘                                                   │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+**Key Benefits:**
+
+- **Zero Data Movement** — Documents uploaded to NFS/SMB shares are immediately accessible to AI applications via Object REST API. No pipelines, no ETL, no waiting.
+
+- **Single Source of Truth** — One copy of data serves all access patterns: file sharing, data science workflows, and AI/RAG applications.
+
+- **Powered by NetApp ONTAP** — Enterprise-proven storage OS delivering instant snapshots, cross-region replication, storage tiering, and consistent sub-millisecond latency.
+
+- **Simplify AI Data Architecture** — Eliminate the complexity of synchronizing data between file storage and object storage. Your enterprise file shares become AI-ready instantly.
+
+- **Accelerate Time-to-Value** — Existing documents on corporate file shares can power RAG applications immediately. Drop a file on the share, query it in the chatbot seconds later.
+
 ### Multi-Protocol Architecture
 
 Azure NetApp Files provides **three protocols to the same underlying data**:
