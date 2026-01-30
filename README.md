@@ -160,7 +160,7 @@ azd up
 
 ## Azure NetApp Files Integration (SimpleChat-ANF)
 
-This fork extends SimpleChat with **Azure NetApp Files (ANF)** as an enterprise storage option, demonstrating ANF's powerful capabilities for AI and RAG workloads.
+This fork extends SimpleChat with **Azure NetApp Files** as an enterprise storage option, demonstrating Azure NetApp File's powerful capabilities for AI and RAG workloads.
 
 ### Why Azure NetApp Files for AI Workloads?
 
@@ -183,24 +183,25 @@ Azure NetApp Files enables AI applications to directly consume data from enterpr
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│                     Enterprise Data Workflow                         │
+│                     Enterprise Data Workflow                        │
 ├─────────────────────────────────────────────────────────────────────┤
-│                                                                      │
-│   ┌──────────────┐                                                   │
-│   │ Windows Users│──── SMB ────┐                                     │
-│   │ (file drops) │             │                                     │
-│   └──────────────┘             │                                     │
-│                                ▼                                     │
+│                                                                     │
+│   ┌──────────────┐                                                  │
+│   │ Windows Users│──── SMB ────┐                                    │
+│   │ (file drops) │             │                                    │
+│   └──────────────┘             │                                    │
+│                                ▼                                    │
 │   ┌──────────────┐      ┌─────────────┐      ┌──────────────┐       │
-│   │ Linux/Data   │─NFS─▶│  ANF Volume │◀─S3──│  AI Apps     │       │
+│   │ Linux/Data   │─NFS─▶│Azure NetApp │      │              │       │
+│   │              │      │Files Volume │◀─S3──│  AI Apps     │       │
 │   │ Science      │      │  (one copy) │      │  (SimpleChat)│       │
 │   └──────────────┘      └─────────────┘      └──────────────┘       │
-│                                ▲                                     │
-│   ┌──────────────┐             │                                     │
-│   │ Backup/DR    │── Snapshot ─┘                                     │
-│   │ Operations   │                                                   │
-│   └──────────────┘                                                   │
-│                                                                      │
+│                                ▲                                    │
+│   ┌──────────────┐             │                                    │
+│   │ Backup/DR    │── Snapshot ─┘                                    │
+│   │ Operations   │                                                  │
+│   └──────────────┘                                                  │
+│                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -245,7 +246,7 @@ Azure NetApp Files provides **three protocols to the same underlying data**:
 - **NFS**: Linux compute, Jupyter notebooks, ML training pipelines
 - **SMB**: Windows desktops, enterprise file sharing, Active Directory integration
 
-### ANF Service Tiers
+### Azure NetApp Files Service Tiers
 
 Choose the performance tier that fits your workload:
 
@@ -258,7 +259,7 @@ Choose the performance tier that fits your workload:
 
 ### Deployment
 
-#### Deploy with ANF Infrastructure
+#### Deploy with Azure NetApp Files Infrastructure
 
 ```powershell
 azd up --parameters deployAzureNetAppFiles=true anfServiceLevel=Premium
@@ -267,9 +268,9 @@ azd up --parameters deployAzureNetAppFiles=true anfServiceLevel=Premium
 This deploys:
 - All standard SimpleChat resources (Blob Storage for documents)
 - Azure NetApp Files account, capacity pool, and volumes
-- VNet with dedicated ANF subnet (Microsoft.NetApp/volumes delegation)
+- VNet with dedicated Azure NetApp Files subnet (Microsoft.NetApp/volumes delegation)
 
-#### Deploy without ANF (Original SimpleChat)
+#### Deploy without Azure NetApp Files (Original SimpleChat)
 
 ```powershell
 azd up
@@ -281,7 +282,7 @@ Deploys standard SimpleChat with Azure Blob Storage only.
 
 > **IMPORTANT**: The object REST API feature is currently in **PREVIEW** and requires manual configuration through the Azure Portal.
 
-To enable object REST API access to ANF volumes:
+To enable object REST API access to Azure NetApp Files volumes:
 
 #### Step 1: Enroll in Preview
 - Submit a [waitlist request](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-access-configure) for the object REST API feature
@@ -319,13 +320,13 @@ When using AWS CLI, always use `us-east-1` as the default region name.
 
 ### Azure AI Services Integration
 
-Once Object REST API is configured, ANF volumes can be accessed by:
+Once Object REST API is configured, Azure NetApp Files volumes can be accessed by:
 
 | Service | Integration Method |
 |---------|-------------------|
 | **Azure AI Search** | S3-compatible data source indexer |
 | **Azure Databricks** | Spark S3A connector |
-| **OneLake** | Shortcuts to virtualize ANF into Microsoft Fabric |
+| **OneLake** | Shortcuts to virtualize Azure NetApp Files into Microsoft Fabric |
 | **Azure AI Foundry** | Direct access to training data |
 
 ### What's New in This Fork
