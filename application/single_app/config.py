@@ -214,6 +214,45 @@ storage_account_user_documents_container_name = "user-documents"
 storage_account_group_documents_container_name = "group-documents"
 storage_account_public_documents_container_name = "public-documents"
 
+# =============================================================================
+# Storage Backend Configuration
+# =============================================================================
+# Toggle between Azure Blob Storage and Azure NetApp Files
+# Options: "blob" (default) or "anf"
+STORAGE_BACKEND = os.getenv("STORAGE_BACKEND", "blob").lower()
+
+# Azure NetApp Files Configuration (used when STORAGE_BACKEND="anf")
+ANF_OBJECT_API_ENDPOINT = os.getenv("ANF_OBJECT_API_ENDPOINT", "")
+ANF_AUTH_TYPE = os.getenv("ANF_AUTH_TYPE", "key")
+ANF_ACCESS_KEY = os.getenv("ANF_ACCESS_KEY", "")
+ANF_SECRET_KEY = os.getenv("ANF_SECRET_KEY", "")
+ANF_SERVICE_LEVEL = os.getenv("ANF_SERVICE_LEVEL", "Premium")
+
+# ANF bucket names (map to blob container names for consistency)
+ANF_USER_DOCUMENTS_BUCKET = os.getenv("ANF_USER_DOCUMENTS_BUCKET", "user-documents")
+ANF_GROUP_DOCUMENTS_BUCKET = os.getenv("ANF_GROUP_DOCUMENTS_BUCKET", "group-documents")
+ANF_PUBLIC_DOCUMENTS_BUCKET = os.getenv("ANF_PUBLIC_DOCUMENTS_BUCKET", "public-documents")
+
+def is_anf_storage_enabled():
+    """Check if Azure NetApp Files storage backend is enabled and configured."""
+    return STORAGE_BACKEND == "anf" and bool(ANF_OBJECT_API_ENDPOINT)
+
+def get_anf_client():
+    """Get ANF storage service client if enabled, None otherwise."""
+    if not is_anf_storage_enabled():
+        return None
+    try:
+        from services.anf_storage_service import ANFStorageService
+        return ANFStorageService(
+            endpoint=ANF_OBJECT_API_ENDPOINT,
+            access_key=ANF_ACCESS_KEY,
+            secret_key=ANF_SECRET_KEY,
+            auth_type=ANF_AUTH_TYPE
+        )
+    except Exception as e:
+        logging.error(f"Failed to initialize ANF storage client: {e}")
+        return None
+
 # Initialize Azure Cosmos DB client
 cosmos_endpoint = os.getenv("AZURE_COSMOS_ENDPOINT")
 cosmos_key = os.getenv("AZURE_COSMOS_KEY")
