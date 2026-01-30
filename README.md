@@ -14,7 +14,9 @@ The application utilizes **Azure Cosmos DB** for storing conversations, metadata
 
 ## Quick Deploy
 
-[Detailed deployment Guide](./deployers/bicep/README.md)
+**📘 [Complete Step-by-Step Deployment Guide](./DEPLOY_STEPS.md)** ← Start here for full deployment instructions
+
+[Bicep Module Reference](./deployers/bicep/README.md)
 
 ### Pre-Configuration:
 
