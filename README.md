@@ -1,4 +1,4 @@
-![logo](./docs/images/logo-wide.png)
+
 ![logo](./docs/images/logo-wide.png)
 
 # Overview
@@ -370,4 +370,5 @@ ANF_SECRET_KEY="<from-azure-portal>"
 - [Object REST API Overview](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-introduction)
 - [Connect OneLake to Azure NetApp Files](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-onelake)
 - [Connect Azure Databricks to Azure NetApp Files](https://learn.microsoft.com/en-us/azure/azure-netapp-files/object-rest-api-databricks)
+
 - [Project Drift Report](./DRIFT.md) - Detailed comparison with parent repo
